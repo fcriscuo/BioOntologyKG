@@ -1,0 +1,4 @@
+gene_id,gene_symbol,gene_name,chromosome,start_pos,end_pos,strand,biotype
+ENSG00000000003,TSPAN6,tetraspanin 6,X,100627109,100639991,"-",protein_coding
+ENSG00000000005,TNMD,tenomodulin,X,100584802,100599885,"+",protein_coding
+ENSG00000000419,DPM1,dolichyl-phosphate mannosyltransferase subunit 1,20,50934867,50958555,"-",protein_coding
