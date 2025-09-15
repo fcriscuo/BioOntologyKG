@@ -1,0 +1,15 @@
+As a Neo4j v5 expert, please generate a Cypher Query Language (CQL) script that 
+will import COSMIC_Classification data from a tsv-formatted file. Please adhere to 
+the following specifications:
+1. The input tsv file is /Volumes/SSD870/COSMIC_rel102/Cosmic_Classification_Tsv_v102_GRCh38/Cosmic_Classification_Tsv_v102_GRCh38.tsv
+2. The first line of the tsv file consist of column headings
+3. After the header line, each subsequent line should be used to create a new COSMIC_Classification node.
+4. Each column in a tsv row should be used to create a property in the COSMIC_Classification node. The property name should be
+   the same as the column name,
+5. The CQL script ahould create a UNIQUE constraint on the COSMIC_PHENOTYPE_ID property in the COSMIC_Classification node
+6. The CQL script shouls contain a Cypher command to DETACH and DELETE all COSMIC_Classification nodes to faciliate
+   rerunning the script as needed
+7. The CQL script shoulsd create a "HAS_NCIT" relationship from the NCI_CODE value in the COSMIC_Classification and the 
+   NCI_CODE value in the NCIT_Term
+8. The CQL script should be outputted as cql/import/import_cosmic_classification.cql
+9. Do not attempt to execute the CQL script.

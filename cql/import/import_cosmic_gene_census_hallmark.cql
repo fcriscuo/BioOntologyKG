@@ -1,0 +1,62 @@
+// COSMIC Cancer Gene Census Hallmark Import Script for Neo4j v5
+// This script imports hallmark data, creates nodes, and links them to
+// existing cancer genes and publications.
+
+
+// ================================
+// STEP 2: Clean Existing Data
+// ================================
+// Detach and delete all existing COSMIC_Cancer_Gene_Hallmark nodes in batches.
+MATCH (h:COSMIC_Cancer_Gene_Hallmark)
+CALL {
+    WITH h
+    DETACH DELETE h
+} IN TRANSACTIONS OF 1000 ROWS;
+
+// ================================
+// STEP 3: Import Hallmark Data and Create Relationships
+// ================================
+//:auto USING PERIODIC COMMIT 1000
+LOAD CSV WITH HEADERS FROM 'file:///Volumes/SSD870/COSMIC_rel102/Import/Cosmic_CancerGeneCensusHallmarksOfCancer_v102_GRCh38.tsv' AS row FIELDTERMINATOR '\t'
+CALL (row) {
+// Create the COSMIC_Cancer_Gene_Hallmark node
+CREATE (h:COSMIC_Cancer_Gene_Hallmark)
+SET h = row
+
+// Link to the corresponding COSMIC_Cancer_Gene node
+WITH h, row
+MATCH (g:COSMIC_Cancer_Gene {COSMIC_GENE_ID: row.COSMIC_GENE_ID})
+MERGE (g)-[:HAS_HALLMARK]->(h)
+
+// Conditionally link to a Publication node if a PubMed ID is present
+WITH h, row
+FOREACH (pmid IN CASE WHEN row.PUBMED_PMID IS NOT NULL AND row.PUBMED_PMID <> '' THEN [row.PUBMED_PMID] ELSE [] END |
+    MERGE (p:Publication {pubmed_id: pmid})
+    MERGE (h)-[:HAS_PUBLICATION]->(p)
+)
+} IN TRANSACTIONS OF 1000 ROWS;
+
+// ================================
+// STEP 4: Verification Queries
+// ================================
+// Count total hallmark nodes imported
+MATCH (h:COSMIC_Cancer_Gene_Hallmark)
+RETURN count(h) AS totalHallmarkNodes;
+
+// Count HAS_HALLMARK relationships
+MATCH ()-[r:HAS_HALLMARK]->()
+RETURN count(r) AS totalHallmarkRelationships;
+
+// Count HAS_PUBLICATION relationships from hallmarks
+MATCH (:COSMIC_Cancer_Gene_Hallmark)-[r:HAS_PUBLICATION]->()
+RETURN count(r) AS totalPublicationRelationships;
+
+// Sample a complete relationship chain
+MATCH (g:COSMIC_Cancer_Gene)-[:HAS_HALLMARK]->(h:COSMIC_Cancer_Gene_Hallmark)-[:HAS_PUBLICATION]->(p:Publication)
+RETURN g.GENE_SYMBOL, h.HALLMARK, p.pubmed_id
+LIMIT 10;
+
+// ================================
+// SCRIPT COMPLETION MESSAGE
+// ================================
+RETURN "COSMIC Hallmark import script completed successfully." AS status;

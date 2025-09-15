@@ -1,0 +1,23 @@
+As an expert Neo4j v5 developer, please create a Cypher Query Language (CQL) script that will import
+HUGO Gene Nomenclature Committee (HGNC) data from a specified tsv file into a local Neo4j v5 database.
+Please carefully follow the following specifications:
+1. Create a Neo4j v5 constraint that ensures that the hgnc_id value is unique.
+2. The tsv formatted input file is locates at /Volumes/SSD870/data/HGNC/hgnc_complete_set.tsv
+3. The first row in the tsv file is a header and each column name should be mapped to a Neo4j node property with the
+    same name
+4. Each subsequent row, after the header, in the tsv file should create a new node labeled HGNC.
+5 Every entry (i.e. column) should be imported into the new node as string properties, and the property
+   name should be the same as the column name.
+6. The imports should be processed in batches of 1000 rows.
+7. Column values that contain the pipe character (i.e. |) (e.g. pubmed_id), should be split using | as a delimiter and the
+   resulting values persisted as a List of strings in the Neo4j database (e.g. A|B|C maps to [A,B,C].
+8. Column names starting with "date" (e.g. date_name_changed) should be ignored
+9. Before importing data from the tsv file,the CQL script should DETACH snd DELETE any existing HGNC nodes in the
+   database. This will facilitate re-running the script after modifications. To avoid memory issues, this operation
+   should be performed in batches of 1000
+10. The following environment variables: NEO4J_URI, NEO4J_USERNAME, NEO4J_PASSWORD, and NEO4J_DATABASE should be to
+    establish a connection to the local Neo4j database.Please p
+11  Pay particular attention to Neo4j v5 revised syntax for batch transactions
+12. Please note that the Cypher "CALL {} IN TRANSACTIONS OF 1000 ROWS" has been deprecated and replaced with "CALL () {}"
+12. Write out the generated Cypher code to ./cql/import directory
+13. Do not attempt to execute the generated CQL script

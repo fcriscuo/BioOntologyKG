@@ -1,0 +1,20 @@
+You are a Neo4j v5 Cypher Query Language (CQL) export. Please generate a CQL script that will read in a tsv file
+representing protein-protein interacions between Uniprot entries in an existing Neo4j database. Please adhere to
+the following specifications:
+1. The tsv file is located at /Volumes/SSD870/data/intact/uniprot_9606_intact.tsv
+2. The first row in this tsv file are the column headings
+3. Only the first two (2) columns are to be processed:  "ID(s) interactor A"  and	"ID(s) interactor B" .
+4. These columns represent the Entry property of two (2) existing UniProt nodes in the database.
+5. The values in these two (2) columns have a "uniprotkb" prefix which must be removed. For example, "uniprotkb:O43426	uniprotkb:P49418" should be processed 
+   as "O43426 P49418"
+6. The CQL script should MATCH the Entry property with the modified "ID(s) interactor A" value. For example "MATCH (u1:UniProt) WHERE u1.Entry ='Q43426'"
+7. If that UniProt node exists, the CQL script should  then MATCH the Entry property with the modified "ID(s) interactor B" value. 
+   For example "MATCH (u2:UniProt) WHERE u2.Entry ='P49418'"
+8. If both UniProt nodes exists, the script should create an "INTERACTS_WITH" relationship between the twoUniProt nodes.
+   MERGE (u1)-[:INTERACTS_WITH]->(u2)
+9. This relationship should only be created if there isn't an existing INTERACTS_WITH relationship in either direction. For example if an 
+   "INTERACTS_WITH" already exists between UniProt Entrty O43426  and UniProt Entrty P49418, a subsequent relationship between P49418 and 
+   O43426 should not be created. There should only be one INTEARCTS_WITH relationship between any two (2) UniProt nodes
+10. Please ashere to Neo4j v5 Cypher syntax.
+11. Do not execute the CQL script.
+12. Output the CQ: script to cql/import/uniprot_intact.cql

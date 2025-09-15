@@ -1,0 +1,28 @@
+[project]
+name = "bioontologykg"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "bio>=1.8.0",
+    "biopython>=1.85",
+    "datetime>=5.5",
+    "dotenv>=0.9.9",
+    "fastapi>=0.116.1",
+    "huggingface-hub>=0.34.5",
+    "neo4j>=5.28.2",
+    "numpy>=2.3.2",
+    "pandas>=2.3.2",
+    "pronto>=2.7.0",
+    "pydantic>=2.11.7",
+    "pytest>=8.4.1",
+    "pytest-cov>=6.2.1",
+    "python-dotenv>=1.1.1",
+    "requests>=2.32.5",
+    "scikit-learn>=1.7.2",
+    "sentence-transformers>=5.1.0",
+    "transformers>=4.56.1",
+    "typing>=3.10.0.0",
+    "uvicorn>=0.35.0",
+]

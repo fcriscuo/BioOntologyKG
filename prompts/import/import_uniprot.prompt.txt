@@ -1,0 +1,27 @@
+As an expert Neo4j v5 developer, please create a Cypher Query Language (CQL) script that will import
+UniProt data from a specified tsv file into a local Neo4j v5 database.
+Please carefully follow the following specifications:
+
+1. The UniProt tsv file is locally located at /Volumes/SSD870/data/UniProt/uniprot_2025_08_28.tsv
+2. With the exception of the tsv file header (i.e. first row) should be used to populate a new Neo4j node with the UniProt label.
+3. The first row of Uniprot tsv file is a column header and the selected column names should be used to map UniProt node property names.
+   Property names that include spaces (e.g. 'Protein names', 'Gene Ontology (biological process)'	) should have the spaces replaced with underscores (i.e. '_')
+   (e.g. 'Protein_names', 'Gene_Ontology_(biological_process)')
+4. The script should include the creation of a unique constraint on the UniProt node's Entry property.
+5. Some of the columns (e.g. Gene Ontology IDs, PubMed ID) represent multiple values delimited by semi-colonx (i.e. ';') (e.g. GO:0005634; GO:0016529; GO:0048471).
+   These values should be split on the semi-colon delimiter and imported into Neo4j as a list of strings (e.g. [ GO:0005634, GO:0016529, GO:0048471)
+6. Only import the following tsv file columns : Entry, Entry Name, Protein names, Gene names, Keywords, Gene Ontology IDs, PubMed ID, 
+   AlphaFoldDB,	BioGRID,	CORUM,	IntAct,	MINT,	STRING,	Ensembl,	HGNC,	DisGeNET,	Reactome,	and Bgee
+7. Column values that end in a semi-colon (i.e. ';') (e.g. HGNC) should have the trailing semi-colon removed ('HGNC:53647;' becomes 'HGNC:53647')
+8. Before importing data from the tsv file,the CQL script should DETACH snd DELETE any existing UniProt nodes in the
+   database. This will facilitate re-running the script after modifications. To avoid memory issues, this operation
+   should be performed in batches of 1000
+9. The following environment variables: NEO4J_URI, NEO4J_USERNAME, NEO4J_PASSWORD, and NEO4J_DATABASE should be to
+    establish a connection to the local Neo4j database.
+10.  Pay particular attention to Neo4j v5 revised syntax for batch transactions
+11. Please note that the Cypher "CALL {} IN TRANSACTIONS OF 1000 ROWS" has been deprecated and replaced with "CALL () {}"
+12. Write out the generated Cypher code to ./cql/import/import_uniprot.cql file
+13. Do not attempt to execute the generated CQL script
+
+
+

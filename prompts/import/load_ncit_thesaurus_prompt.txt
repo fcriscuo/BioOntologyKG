@@ -1,0 +1,16 @@
+Please generate a Cypher Query Language (CQL) script that will import data from a specified CSV into a local Neo4j 5.2025 database.
+The first line of the CSV file contains column headers. Each subsequent line should generate a node in
+the Neo4j database. The new node should be labeled NCIT_Term.Each column in a line represents a
+property for the new NCIT_Term node. With the exception, of the "Class ID" column, the property name is the same as the
+column name (e.g. Synonyms, Semantic Types, etc.). Property names derived from column names that are
+composed of multiple words, should have their spaces converted to underscores (e.g. "Semantic Types" should map
+to a Semantic_Type property name). The "CLASS ID" column should be ignored.
+The "code" column should map to a property named NCIT_ID.
+The script should contain Cypher commands to ensure that the NCIT_ID value is
+unique.  The following environment variables: NEO4J_URI, NEO4J_USERNAME, NEO4J_PASSWORD, and NEO4J_DATABASE should be to
+establish a connection to the local Neo4j database. The generated CQL script should be entitled "load_ncit_thesaurus.cql".
+The generated CQL must comform to Neo4j v5 syntax.
+Please use the substring '//' instead of '--' to designate a comment (e.g. // This is a comment).  Please place the row
+processing logic within a Cypher "CALL { ....} IN TRANSACTIONS OF 1000 Rows" framework.
+Column values that contain the pipe character (i.e. |) (e.g. Synonyms), should be split using | as a delimiter and the
+resulting values persisted as a List of strings in the Neo4j database (e.g. A|B|C maps to [A,B,C].

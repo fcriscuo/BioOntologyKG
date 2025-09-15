@@ -1,0 +1,23 @@
+As a Neo4j v5 expert, please generate a Cypher Query Language (CQL) script that 
+will import COSMIC_CancerGeneCensus data from a tsv-formatted file. Please adhere to 
+the following specifications:
+1. The input tsv file is /Volumes/SSD870/COSMIC_rel102/Import/Cosmic_Genes_v102_GRCh38.tsv
+2. The first line of the tsv file consist of column headings
+3. After the header line, each subsequent line should be used to create a new  COSMIC_Gene node.
+4. Each column in a tsv row should be used to create a property in the C COSMIC_Gene node. The property name should be
+   the same as the column name,
+5. The CQL script ahould create a UNIQUE constraint on the COSMIC_GENE_ID property in the  COSMIC_Gene node
+6. The CQL script ahould create a UNIQUE constraint on the GENE_SYMBOL property in the  COSMIC_Gene node
+7. The CQL script should contain a Cypher command to DETACH and DELETE all  COSMIC_Gene nodes to faciliate
+   rerunning the script as needed
+8. If the HGNC_ID value in a row is NOT NULL, that value should be prefixed with "HGNC:" (e.g."28664" becomes "HGNC:28664 ) and that
+    updated value should be used to create a HAS_HGNC relationship from the COSMIC_Gene node to an HGNC node with a matching hgnc_id value
+9. If the value of the IN_CANCER_CENSUS is "y", a "HAS_COSMIC_CANCER_GENE" relationship shold be established from the COSMIC_Gene node to a
+    COSMIC_Cancer_Gene node matching on the COSMIC_GENE_ID value.
+10. The value in the GENE_SYMBOL column should be used to create a "HAS_UNIPROT" relationship from the COSMIC_Gene node to a UniProt node.
+     The match should be made from the COSMIC_Gene's GENE_SYMBOL property to a UniProt node whose Entry_Name property STARTS WITH the GENE_SYMBOL.
+     e.g. If the COSMIC_Gene node's GENE_SYMBOL value is "CTIP", it should match the UniProt node whos Entry_Name = "CTIP_HUMAN"
+10. The CQL script should be outputted as cql/import/import_cosmic_genes.cql
+11. Do not attempt to execute the CQL script.
+
+COSMIC_GENE_ID	LEGACY_GENE_ID	GENE_SYMBOL	GENE_ACCESSION	ENTREZ_ID	HGNC_ID	IN_CANCER_CENSUS	IS_EXPERT_CURATED

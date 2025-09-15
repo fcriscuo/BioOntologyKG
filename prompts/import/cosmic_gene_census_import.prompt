@@ -1,0 +1,29 @@
+As a Neo4j v5 expert, please generate a Cypher Query Language (CQL) script that 
+will import COSMIC_CancerGeneCensus data from a tsv-formatted file. Please adhere to 
+the following specifications:
+1. The input tsv file is /Volumes/SSD870/COSMIC_rel102/Import/Cosmic_CancerGeneCensus_v102_GRCh38.tsv
+2. The first line of the tsv file consist of column headings
+3. After the header line, each subsequent line should be used to create a new COSMIC_Cancer_Gene node.
+4. Each column in a tsv row should be used to create a property in the CCOSMIC_Cancer_Gene node. The property name should be
+   the same as the column name,
+5. The CQL script ahould create a UNIQUE constraint on the COSMIC_GENE_ID property in the COSMIC_Cancer_Gene node
+6. 5. The CQL script ahould create a UNIQUE constraint on the GENE_SYMBOL property in the COSMIC_Cancer_Gene node
+7. The GENOME_START	and GENOME_STOP properties should be imported as integer values
+8. Column values that contain commas (i.e. ",") (e.g. TUMOUR_TYPES_SOMATIC), should be split, using the comma as a delimiter, and
+   imported as a list
+9. The CQL script should contain a Cypher command to DETACH and DELETE all COSMIC_Cancer_Gene nodes to faciliate
+   rerunning the script as needed
+10. The CQL script shoulsd create a "HAS_HGNC" relationship from the GENE_SYMBOL value in the COSMIC_Cancer_Gene and the 
+   symbol value in the HGNC node
+11. After all the tsv rows have been imported, the CQL script should process the TRANSLOCATION_PARTNER values in each COSMIC_Cancer_Gene node.
+    The script should create a "HAS_TRANSLOCATION_PARTNER" relationship between the GENE_SYMBOL property of the COSMIC_Cancer_Gene node being processed
+    an the GENE_SYMBOL property of the COSMIC_Cancer_Gene node identified by the TRANSLOCATION_PARTNER value being processed. For example, in processing
+    the COSMIC_Cancer_Gene node whose GENE_SYMBOL is "AFF1", one of the TRANSLOCATION_PARTNER property values is "KMT2A". The cql script should create the
+    following relationship:
+         MATCH (g1:CCOSMIC_Cancer_Gene) WHERE g1.GENE_SYMBOL = 'AFF1'
+         MATCH (g2:CCOSMIC_Cancer_Gene) WHERE g1.GENE_SYMBOL = 'KMT2A'
+         MERGE (g2)-[:HAS_TRANSLOCATION_PARTNER]->(g2)
+    Only one (1) HAS_TRANSLOCATION_PARTNER should be created between any pair of nodes. If a HAS_TRANSLOCATION_PARTNER relationship already
+    exists between two COSMIC_Cancer_Gene nodes, a second one should not be created.
+12. The CQL script should be outputted as cql/import/import_cosmic_gene_census.cql
+13. Do not attempt to execute the CQL script.

@@ -1,0 +1,18 @@
+As a Neo4j v5 expert, please generate a Neo4j v5 Cypher Query Language (CQL) script that 
+establishes a Neo4j relationship between an existing UniProt node and one or more existing GoTerm nodes.
+The script must adheres to the following specidications
+1. The CQL must conform to Neo4j v5 syntax
+2. Every UniProt node in the database must be processed
+3. Each UniProt node has a 'Gene Ontology IDs' property which represents a list of related GoTerms
+4. Each value from a UniProt node's 'Gene Ontology IDs' propert maps to a GoTerm nodes id property.
+5. The script should create a Neo4j relattionship between the current UniProt node and the identified GoTerm node.
+6. The name of the  relationship is determined by the value of the GoTerm node's namespace value, converted to upper case, prefixed by 'HAS_'
+7 Example:
+    a. UniProt Entrty=A0A1B0GTW7  GO_ONTOLOGY_ID:GO:0004222    GoTerm id:GO:0004222  namespace: molecular_function
+       Cypher: MATCH(u:UniProt) WHERE u.Entry='A0A1B0GTW7'
+              // process each item in th list of 'GENE_ONTOLOGY_IDs'
+               MATCH(g:GoTERM) WHERE g.id='GO:0004222'
+               MERGE (g)-[r:HAS_MOLECULAR_FUNCTION]->(g)
+8. Use Neo4j v5 batch processing
+9. Do not attempt to execute the CQL script
+10. Output the script to cql/import/uniprot_go_relationship.cql

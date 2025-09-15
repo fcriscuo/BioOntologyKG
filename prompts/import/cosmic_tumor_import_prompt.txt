@@ -1,0 +1,18 @@
+As a Neo4j v5 expert, please generate a Cypher Query Language (CQL) script that 
+will import COSMIC_Tumour data from a tsv-formatted file. Please adhere to 
+the following specifications:
+- The tsv input file is file:///Volumes/SSD870/COSMIC_rel102/Import/Cosmic_Sample_v102_GRCh38.tsv
+- The CQL script should create a new UNIQUE constraint for the TUMOUR_ID property in the Cosmic_Tumour node
+- The first line in this file consist of column headings.
+- Each subsequent row in the file should be used to create a new COSMIC_Tumour node.
+- Only import the following columns: TUMOUR_ID, INDIVIDUAL_ID, TUMOUR_SOURCE, NORMAL_TISSUE_TESTED, 
+  AGE_AT_TUMOUR_RECURRENCE, THERAPY_RELATIONSHIP, MUTATION_ALLELE_SPECIFICATION, DRUG_RESPONSE,
+  GRADE,  STAGE, CYTOGENETICS, METASTATIC_SITE, GERMLINE_MUTATION, and THERAPY
+- The property AGE_AT_TUMOUR_RECURRENCE should be imported as an integer
+- The CQL script should include a transaction to DETACH and DELETE all COSMIC_Tumour nodes to facilitate 
+  rerunning the script.
+- The CQL script should create a HAS_TUMOUR from a COSMIC_Individual node to a COSMIC_Tumour node based on the
+  value of the INDIVIDUAL_ID property in each of these node types 
+- A COSMIC_Individual node may have more than one HAS_TUMOUR relationships to COSMIC_Tumour nodes
+- The generated script should be written out to cql/import/import_cosmic_tumour.cql
+- Do not attempt to execute the CQL script

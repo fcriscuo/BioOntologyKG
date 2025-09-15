@@ -1,0 +1,15 @@
+As a Neo4j v5 expert, please generate a Neo4j Cypher Query Language (CQL) script that will create Neo4j relationships between existing HGNC nodes and new or existing
+Publication nodes in a local Neo4j database. Please adhere to the following specifications:
+1. Create a Cypher unique constraint for the pubmed_id property in the Publication node
+2 Process every HGNC node in the connected database that has one or more PubMed identifers in the pubmed_id proerty.
+3. For each PubMed identifier in the list, create a new Publication node with a pubmed_id property set to the current PubMed identifier value if a Publication
+   node with that pubmed_id value does not exist.
+4. Create a HAS_PUBLICATION relationship beteen the HGNC node and the new or existing Publication node. For example (h:HGNC)-[r:HAS_PUBLICATION]->(p:Publication) where h is the
+   current HGNC node being processed and p is the Publication node identified by the currrent pubmed_id being processed
+5. An HGNC node can have multiple HAS_PUBLICATION outgoing relationships and a Publication can  have multiple incoming HAS_PUBLICATION relationships.
+6. The following environment variables: NEO4J_URI, NEO4J_USERNAME, NEO4J_PASSWORD, and NEO4J_DATABASE should be to
+    establish a connection to the local Neo4j database.
+7  Pay particular attention to Neo4j v5 revised syntax for batch transactions
+8. Please note that the Cypher "CALL {} IN TRANSACTIONS OF 1000 ROWS" has been deprecated and replaced with "CALL () {}"
+9. Write out the generated Cypher code to ./cql/import/hgnc_ubmed.cql 
+10. Do not attempt to execute the generated CQL script
