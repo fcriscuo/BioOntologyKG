@@ -59,6 +59,14 @@ CALL (g){
     MERGE (g)-[:HAS_UNIPROT]->(u)
 } IN TRANSACTIONS OF 1000 ROWS;
 
+// Create a HAS_GENE relationship to Gene Node based on gene_symbol
+MATCH (cg:COSMIC_Gene)
+CALL (cg){
+    MATCH (g:Gene)
+    WHERE g.GENE_SYMBOL = cg.GENE_SYMBOL
+    MERGE (cg)-[:HAS_GENE]->(g)
+}IN TRANSACTIONS OF 1000 ROWS;
+
 // ================================
 // STEP 5: Verification Queries
 // ================================

@@ -94,15 +94,12 @@ CALL(row) {
         s.THERAPY = row.THERAPY
 
     // Create relationships between the nodes
-    WHERE row.COSMIC_PHENOTYPE_ID IS NOT null
-        MERGE (c:COSMIC_CLASSIFICATION) WHERE (c.COSMIC_PHENOTYPE_ID) = t.COSMIC_PHENOTYPE_ID
-        MERGE  (t)-[:HAS_PHENOTYPE]->(c)
-
     MERGE (i)-[:HAS_TUMOUR]->(t)
     MERGE (t)-[:HAS_SAMPLE]->(s)
-
-
-
 } IN TRANSACTIONS OF 1000 ROWS;
 
-
+MATCH (t:COSMIC_Tumour) where t.COSMIC_PHENOTYPE_ID IS NOT NULL
+CALL (t){
+    MATCH (c:COSMIC_Classification) WHERE c.COSMIC_PHENOTYPE_ID = t.COSMIC_PHENOTYPE_ID
+    MERGE (t)-[:HAS_PHENOTYPE]->(c)
+} IN TRANSACTIONS OF 1000 ROWS;
