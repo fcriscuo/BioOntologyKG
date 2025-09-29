@@ -37,9 +37,15 @@ CALL (i){
     DETACH DELETE i
 } IN TRANSACTIONS OF 1000 ROWS;
 
-// process each row in the TSV file to create the nodes and relationships
-LOAD CSV WITH HEADERS FROM 'file:///Volumes/SSD870/COSMIC_rel102/Import/Cosmic_Sample_v102_GRCh38.tsv' AS row FIELDTERMINATOR '\t'
+// Create schema indices
+CREATE INDEX cosmic_individual_index FOR (i:COSMIC_Individual) ON (i.INDIVIDUAL_ID)
+CREATE INDEX cosmic_tumour_index FOR (t:COSMIC_Tumour) ON (t.TUMOUR_ID)
+CREATE INDEX cosmic_sample_index FOR (s:COSMIC_Sample) ON (s.COSMIC_SAMPLE_ID)
 
+// process each row in the TSV file to create the nodes and relationships
+//LOAD CSV WITH HEADERS FROM 'file:///Volumes/SSD870/COSMIC_rel102/Import/Cosmic_Sample_v102_GRCh38.tsv' AS row FIELDTERMINATOR '\t'
+// Process the partial sample file
+LOAD CSV WITH HEADERS FROM 'file:///Volumes/SSD870/COSMIC_rel102/Import/CosmicSamplePartial.ysv' AS row FIELDTERMINATOR '\t'
 // Process each row to create nodes and relationships
 CALL(row) {
     // Create the COSMIC_Individual node

@@ -35,14 +35,6 @@ SET g = row
 // STEP 4: Create Relationships
 // ================================
 
-// Create HAS_HGNC relationships
-MATCH (g:COSMIC_Gene)
-WHERE g.HGNC_ID IS NOT NULL AND g.HGNC_ID <> ''
-CALL (g){
-    MATCH (h:HGNC {hgnc_id: 'HGNC:' + g.HGNC_ID})
-    MERGE (g)-[:HAS_HGNC]->(h)
-} IN TRANSACTIONS OF 1000 ROWS;
-
 // Create HAS_COSMIC_CANCER_GENE relationships
 MATCH (g:COSMIC_Gene)
 WHERE g.IN_CANCER_CENSUS = 'y'

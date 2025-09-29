@@ -1,6 +1,8 @@
-// Cypher Query Language (CQL) script to import data from the DAVID GENE_SYMBOL2DAVID_GENE_NAME file
+// Cypher Query Language (CQL) script to import data from the following DAVID files:
+//          DAVID GENE_SYMBOL2DAVID_GENE_NAME.txt
 // DAVID data files obtained by requests to: https://davidbioinformatics.nih.gov/knowledgebase/knowledgebaseRequest.jsp
-//Citation: B.T. Sherman, M. Hao, J. Qiu, X. Jiao, M.W. Baseler, H.C. Lane,
+//
+//Citations B.T. Sherman, M. Hao, J. Qiu, X. Jiao, M.W. Baseler, H.C. Lane,
 //T. Imamichi and W. Chang.
 //DAVID: a web server for functional enrichment analysis and functional annotation of
 //gene lists (2021 update). Nucleic Acids Research. 23 March 2022. doi:10.1093/nar/gkac194.[PubMed]
@@ -14,6 +16,7 @@
 // Create a unique constraint on the COSMIC_PHENOTYPE_ID property.
 CREATE CONSTRAINT david_gene_symbol_unique IF NOT EXISTS
 FOR (g:Gene) REQUIRE g.gene_symbol IS UNIQUE;
+
 // ================================
 // STEP 2: Clean Existing Data
 // ================================
@@ -22,6 +25,7 @@ MATCH (g:Gene)
 CALL (g) {
     DETACH DELETE g
 } IN TRANSACTIONS OF 1000 ROWS;
+
 
 
 // ================================
@@ -69,3 +73,12 @@ CALL (row) {
     MERGE(g:Gene{GENE_SYMBOL:row.GENE_SYMBOL})
     ON MATCH SET g.CYTOGENETIC_LOCATION = row.CYTOGENETIC_LOCATION
 } IN TRANSACTIONS OF 1000 ROWS;
+
+
+// Create HAS_HGNC relationships from Gene to HGNC based on the GENE_SYMBOL property
+MATCH (h:HGNC) WHERE h.symbol IS NOT NULL
+WITH h
+CALL (h) {
+  MATCH (g:Gene) WHERE g.GENE_SYMBOL = h.symbol
+  MERGE (g)-[:HAS_HGNC]->(h)
+}IN TRANSACTIONS OF 1000 ROWS;
