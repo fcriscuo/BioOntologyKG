@@ -11,7 +11,7 @@ from typing import Dict, List, Optional
 import json
 
 # Set your email for NCBI API (required by NCBI guidelines)
-Entrez.email = "your.email@example.com"  # Replace with your actual email
+Entrez.email = "fcriscuo@genomicsai.dev"  # Replace with your actual email
 
 class PubMedFetcher:
     """Class to fetch and parse PubMed articles using BioPython"""

@@ -165,10 +165,20 @@ def main():
 
         # Example abstract text
         abstract_text = """
-        This study investigates the molecular mechanisms underlying cancer cell 
-        proliferation and identifies potential therapeutic targets for treatment. 
-        We used CRISPR-Cas9 gene editing to knock out specific oncogenes and 
-        observed significant reduction in tumor growth in mouse models.
+        While biallelic mutations in the PALB2 tumor suppressor cause Fanconi anemia subtype FA-N,
+         monoallelic mutations predispose to breast and familial pancreatic cancer. Although hundreds of
+        missense variants in PALB2 have been identified in patients to date, only a few have clear functional
+         and clinical relevance. Herein, we investigate the effects of 44 PALB2 variants of uncertain 
+         significance found in breast cancer patients and provide detailed analysis by systematic 
+         functional assays. Our comprehensive functional analysis reveals two hotspots for potentially 
+         deleterious variations within PALB2, one at each terminus. PALB2 N-terminus variants p.P8L [c.23C>T],
+         p.Y28C [c.83A>G], and p.R37H [c.110G>A]\u00a0compromised PALB2-mediated homologous recombination.
+        At the C-terminus, PALB2 variants p.L947F [c.2841G>T], p.L947S [c.2840T>C], and most strikingly 
+        .T1030I [c.3089C>T] and p.W1140G [c.3418T>C], stood out with pronounced PARP inhibitor sensitivity 
+        and cytoplasmic accumulation in addition to marked defects in recruitment to DNA damage sites, 
+        interaction with BRCA2 and homologous recombination. Altogether, our findings show that a combination 
+        of functional assays is necessary to assess the impact of germline missense variants on PALB2 function, 
+        in order to guide proper classification of their deleteriousness.
         """
 
         print(f"Generating embedding for abstract...")
