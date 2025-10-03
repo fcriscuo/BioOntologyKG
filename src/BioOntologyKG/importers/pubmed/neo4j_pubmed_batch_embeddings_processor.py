@@ -63,6 +63,7 @@ class PubMedFetcher:
             logger.error(f"Error fetching PMID {pubmed_id}: {str(e)}")
             return None
 
+
     def _parse_article(self, article: Dict) -> Dict:
         """Parse the raw article data into structured fields"""
 
@@ -88,7 +89,7 @@ class PubMedFetcher:
             'country': self._get_country(medline_citation),
             'affiliations': self._get_affiliations(article_data),
             'grants': self._get_grants(article_data),
-            'references_pmids': self._get_references(pubmed_data),
+            'references': self._get_references(pubmed_data),
             'status': str(medline_citation.get('Status', '')),
             'date_created': self._get_date_created(medline_citation),
             'date_revised': self._get_date_revised(medline_citation)
@@ -500,7 +501,8 @@ class PubMedBatchProcessor:
 
         with self.driver.session() as session:
             result = session.run(query, {'batch_size': self.batch_size})
-            pmids = [record['pubmed_id'] for record in result]
+            # remove leading blank
+            pmids = [record['pubmed_id'].strip() for record in result]
             return pmids
 
     def update_pubmed_article(self, pubmed_data: Dict) -> bool:
@@ -546,7 +548,7 @@ class PubMedBatchProcessor:
 
             # Update node with all data including embedding
             update_query = """
-            MATCH (p:PubMedArticle {pubmed_id: $pubmed_id})
+            MERGE (p:PubMedArticle {pubmed_id: $pubmed_id})
             SET p.title = $title,
                 p.abstract = $abstract,
                 p.abstract_embedding = $abstract_embedding,
@@ -560,6 +562,7 @@ class PubMedBatchProcessor:
                 p.publicationTypes = $publication_types,
                 p.keywords = $keywords,
                 p.country = $country,
+                p.references = $references,
                 p.status = $status,
                 p.dateCreated = $date_created,
                 p.dateRevised = $date_revised,
@@ -581,6 +584,7 @@ class PubMedBatchProcessor:
                 'language': pubmed_data.get('language', []),
                 'publication_types': pubmed_data.get('publication_types', []),
                 'keywords': pubmed_data.get('keywords', []),
+                'references': pubmed_data.get('references', []),
                 'country': pubmed_data.get('country', ''),
                 'status': pubmed_data.get('status', ''),
                 'date_created': pubmed_data.get('date_created', ''),
@@ -592,6 +596,11 @@ class PubMedBatchProcessor:
                 record = result.single()
 
                 if record:
+                    #if the original pubmed_id is a string that starts with a blank delete that node
+                    #the PubMedArticle node that was updated has a pubmed_id property w/o a starting blank
+                    original_pmid = ' ' +record['pubmed_id']
+                    self.delete_invalid_pubmed_article(original_pmid)
+                    logger.warning(f"*******Deleted PubMedArticle node with PMID:{original_pmid}")
                     logger.info(f"Updated PubMedArticle node for PMID: {record['pubmed_id']}")
                     return True
                 else:
@@ -600,6 +609,38 @@ class PubMedBatchProcessor:
 
         except Exception as e:
             logger.error(f"Error updating PubMedArticle node: {e}")
+            return False
+
+    def delete_invalid_pubmed_article(self, pubmed_id: str) -> bool:
+        """
+        Delete a PubMedArticle node with an invalid pubmed_id
+
+        Args:
+            pubmed_id: The pubmed_id of the article to delete
+
+        Returns:
+            bool: True if deletion was successful, False otherwise
+        """
+        delete_query = """
+        MATCH (p:PubMedArticle {pubmed_id: $pubmed_id})
+        DETACH DELETE p
+        RETURN count(p) as deleted_count
+        """
+
+        try:
+            with self.driver.session() as session:
+                result = session.run(delete_query, {'pubmed_id': str(pubmed_id)})
+                record = result.single()
+
+                if record and record['deleted_count'] > 0:
+                    logger.info(f"Deleted invalid PubMedArticle node: {pubmed_id}")
+                    return True
+                else:
+                    logger.warning(f"No PubMedArticle node found for pubmed_id: {pubmed_id}")
+                    return False
+
+        except Exception as e:
+            logger.error(f"Error deleting PubMedArticle node {pubmed_id}: {e}")
             return False
 
     def process_batch(self) -> int:
@@ -615,7 +656,7 @@ class PubMedBatchProcessor:
         if not pmids:
             logger.info("No more PubMedArticle nodes with null titles found")
             return 0
-
+        logger.info(f"+++++PMIDs: {pmids}")
         logger.info(f"Processing batch of {len(pmids)} PMIDs")
 
         for pmid in pmids:
@@ -635,6 +676,7 @@ class PubMedBatchProcessor:
                         self.total_failed += 1
                 else:
                     logger.warning(f"No data retrieved for PMID: {pmid}")
+                    self.delete_invalid_pubmed_article(pmid)
                     self.total_failed += 1
 
                 self.total_processed += 1
@@ -758,8 +800,8 @@ class PubMedBatchProcessor:
                     results.append({
                         'pubmed_id': record['pubmed_id'],
                         'title': record['title'],
-                        'abstract': record['abstract'][:300] + "..." if record['abstract'] and len(
-                            record['abstract']) > 300 else record['abstract'],
+                        'abstract': record['abstract'][:5000] + "..." if record['abstract'] and len(
+                            record['abstract']) > 5000 else record['abstract'],
                         'first_author': record['firstAuthor'],
                         'journal': record['journalTitle'],
                         'volume': record['volume'],

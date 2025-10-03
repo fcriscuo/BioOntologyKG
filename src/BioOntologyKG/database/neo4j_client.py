@@ -5,7 +5,7 @@ from neo4j import GraphDatabase
 from typing import List, Dict, Any
 import logging
 
-from ..config.settings import settings
+from ..embedding.settings import settings
 
 logger = logging.getLogger(__name__)
 

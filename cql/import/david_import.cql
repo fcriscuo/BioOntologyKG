@@ -99,3 +99,15 @@ MERGE (g:Gene{GENE_SYMBOL:row.GENE_SYMBOL})
 MERGE (g)-[:HAS_GOTERM_CC]->(go)
 
 }IN TRANSACTIONS OF 1000 ROWS;
+
+// Gene Ontology
+// Establish Gene -[:HAS_GOTERM_MF] -> GoTerm
+LOAD CSV WITH HEADERS FROM 'file:///Volumes/SSD870/data/DAVID/david_goterm_mf.tsv'
+AS row FIELDTERMINATOR '\t'
+CALL (row){
+MERGE (go:GOTerm{id:row.GoTermID})
+MERGE (g:Gene{GENE_SYMBOL:row.GENE_SYMBOL})
+MERGE (g)-[:HAS_GOTERM_MF]->(go)
+
+}IN TRANSACTIONS OF 1000 ROWS;
+
