@@ -32,7 +32,12 @@ CALL (row) {
         u.Gene_Ontology_IDs = CASE WHEN row.`Gene Ontology IDs` CONTAINS ';' THEN split(row.`Gene Ontology IDs`, ';') ELSE row.`Gene Ontology IDs` END,
        // u.Interacts_with = CASE WHEN row.`Interacts with` CONTAINS ';' THEN split(row.`Interacts with`, ';') ELSE row.`Interacts with` END,
         u.Interacts_with = split(row.`Interacts with`, ';'),
-        u.PubMed_ID = CASE WHEN row.`PubMed ID` CONTAINS ';' THEN split(row.`PubMed ID`, ';') ELSE row.`PubMed ID` END,
+        //u.PubMed_ID = CASE WHEN row.`PubMed ID` CONTAINS ';' THEN split(row.`PubMed ID`, ';') ELSE row.`PubMed ID` END,
+        u.PubMed_ID = CASE
+            WHEN row.`PubMed ID` CONTAINS ';'
+            THEN [id IN split(row.`PubMed ID`, ';') WHERE trim(id) <> '' | trim(id)]
+            ELSE trim(row.`PubMed ID`)
+        END,
         u.AlphaFoldDB = CASE WHEN row.AlphaFoldDB CONTAINS ';' THEN split(row.AlphaFoldDB, ';') ELSE row.AlphaFoldDB END,
         u.BioGRID = CASE WHEN row.BioGRID CONTAINS ';' THEN split(row.BioGRID, ';') ELSE row.BioGRID END,
         u.CORUM = CASE WHEN row.CORUM CONTAINS ';' THEN split(row.CORUM, ';') ELSE row.CORUM END,

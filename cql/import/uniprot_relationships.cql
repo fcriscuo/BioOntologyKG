@@ -44,7 +44,7 @@ WHERE u.PubMed_ID IS NOT NULL AND size(u.PubMed_ID) > 0
 CALL (u) {
     WITH u
      UNWIND u.PubMed_ID AS pubmedId
-     MERGE (p:Publication {pubmed_id: pubmedId})
+     MERGE (p:PubMedArticle {pubmed_id: trim(pubmedId)})
      MERGE (u)-[:HAS_PUBLICATION]->(p)
 } IN TRANSACTIONS OF 1000 ROWS;
 // ================================

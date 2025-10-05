@@ -51,9 +51,9 @@ LOAD CSV WITH HEADERS FROM 'file:///Volumes/SSD870/data/DAVID/david_pubmed_id.ts
 AS row FIELDTERMINATOR '\t'
 
 CALL (row) {
-// Create the Publication node if novel
+// Create the PubMedArticle node if novel
   MERGE(g:Gene{GENE_SYMBOL:row.GENE_SYMBOL})
-  MERGE (p:Publication {pubmed_id: row.PUBMED_ID})
+  MERGE (p:PubMedArticle {pubmed_id: row.PUBMED_ID})
   MERGE (g)-[:HAS_PUBLICATION]->(p)
 } IN TRANSACTIONS OF 1000 ROWS;
 
@@ -85,29 +85,29 @@ AS row FIELDTERMINATOR '\t'
 CALL (row){
 MERGE (go:GOTerm{id:row.GoTermID})
 MERGE (g:Gene{GENE_SYMBOL:row.GENE_SYMBOL})
-MERGE (g)-[:HAS_GOTERM_BP]->(go)
+MERGE (g)-[:HAS_BIOLOGICAL_PROCESS]->(go)
 
 }IN TRANSACTIONS OF 1000 ROWS;
 
 // Gene Ontology
-// Establish Gene -[:HAS_GOTERM_CC] -> GoTerm
+// Establish Gene -[:HAS_CELLULAR_COMPONENT] -> GoTerm
 LOAD CSV WITH HEADERS FROM 'file:///Volumes/SSD870/data/DAVID/david_goterm_cc.tsv'
 AS row FIELDTERMINATOR '\t'
 CALL (row){
 MERGE (go:GOTerm{id:row.GoTermID})
 MERGE (g:Gene{GENE_SYMBOL:row.GENE_SYMBOL})
-MERGE (g)-[:HAS_GOTERM_CC]->(go)
+MERGE (g)-[:HAS_CELLULAR_COMPONENT]->(go)
 
 }IN TRANSACTIONS OF 1000 ROWS;
 
 // Gene Ontology
-// Establish Gene -[:HAS_GOTERM_MF] -> GoTerm
+// Establish Gene -[:HAS_MOLECULAR_FUNCTION] -> GoTerm
 LOAD CSV WITH HEADERS FROM 'file:///Volumes/SSD870/data/DAVID/david_goterm_mf.tsv'
 AS row FIELDTERMINATOR '\t'
 CALL (row){
 MERGE (go:GOTerm{id:row.GoTermID})
 MERGE (g:Gene{GENE_SYMBOL:row.GENE_SYMBOL})
-MERGE (g)-[:HAS_GOTERM_MF]->(go)
+MERGE (g)-[:HAS_MOLECULAR_FUNCTION]->(go)
 
 }IN TRANSACTIONS OF 1000 ROWS;
 

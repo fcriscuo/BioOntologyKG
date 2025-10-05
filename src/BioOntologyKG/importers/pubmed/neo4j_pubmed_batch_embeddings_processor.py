@@ -456,7 +456,7 @@ class PubMedBatchProcessor:
     """Process PubMed articles in batches from Neo4j with embeddings"""
 
     def __init__(self, neo4j_uri: str, neo4j_user: str, neo4j_password: str,
-                 pubmed_email: str, batch_size: int = 10,
+                 pubmed_email: str, batch_size: int = 50,
                  embedding_model: str = "microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext"):
         """
         Initialize batch processor
@@ -596,11 +596,6 @@ class PubMedBatchProcessor:
                 record = result.single()
 
                 if record:
-                    #if the original pubmed_id is a string that starts with a blank delete that node
-                    #the PubMedArticle node that was updated has a pubmed_id property w/o a starting blank
-                    original_pmid = ' ' +record['pubmed_id']
-                    self.delete_invalid_pubmed_article(original_pmid)
-                    logger.warning(f"*******Deleted PubMedArticle node with PMID:{original_pmid}")
                     logger.info(f"Updated PubMedArticle node for PMID: {record['pubmed_id']}")
                     return True
                 else:
@@ -656,7 +651,6 @@ class PubMedBatchProcessor:
         if not pmids:
             logger.info("No more PubMedArticle nodes with null titles found")
             return 0
-        logger.info(f"+++++PMIDs: {pmids}")
         logger.info(f"Processing batch of {len(pmids)} PMIDs")
 
         for pmid in pmids:
