@@ -323,7 +323,7 @@ def main():
         neo4j_uri=NEO4J_URI,
         neo4j_user=NEO4J_USER,
         neo4j_password=NEO4J_PASSWORD,
-        embedding_model="all-MiniLM-L6-v2"  # Change to biomedical model if desired
+        embedding_model="all-mpnet-base-v2"  # Change to biomedical model if desired
     )
 
     try:
