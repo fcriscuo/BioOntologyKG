@@ -569,7 +569,7 @@ if __name__ == "__main__":
     graph = miner.mine_knowledge_graph(
         seminal_pmids=seminal_papers,
         min_citations=50,  # Only include papers with >= 50 citations
-        max_citing_papers=500  # Get up to 500 citing papers per seminal paper
+        max_citing_papers=2000  # Get up to 500 citing papers per seminal paper
     )
 
     # Export to JSON
