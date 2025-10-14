@@ -1,0 +1,59 @@
+Good Morning. I would like to extend the functionality your provided in the cancer_pubmed_data_miner.py Python
+script by incorporating the PubMed data import capabilities from the neo4j_pubmed_batch_embeddings_processor.py
+Python script. I would to process the PubMed IDs for seminal papers, references, and citing_papers listed in the
+cancer_genomics_kg.json file to fetch PubMed data from NCBI, populate new or existing PubMedArticle
+nodes with these data including vector embeddings for paper abstracts, and create CITES relationships between
+these nodes.
+
+
+The objective of a new Python script will be to greate a PubMed knowledge graph based on the organization of
+PubMed IDs in the generated cancer_genomics_kg.json file. Each PubMed ID listed in the cancer_genomics_kg.json
+Python script should be processed based on its location in the JSON file hierarchy (i.e. seminal_papers, reference,
+citing_papers). The following sequence of operations should be performed:
+
+1.Create a new PubMedArticle node in the local Neo4j v5 database, if a PubMedArticle node for that PubMed ID
+  does not already exist, for every PubMed ID listed in the cancer_genomics_kg.json file.
+
+2. If the title property for that PubMedArticle node is null, then fetch the PubMed entry for the PubMed ID from
+   NCBI and populate the node properties as performed in the neo4j_pubmed_batch_embeddings_processor.py Python
+   script.These properties should include an embedding vector based on the node's abstract property. Only fetch
+   data from NCBI if the title property is null. If possible, the existing functionality from the
+   neo4j_pubmed_batch_embeddings_processor.py Python script should be invoked or incorporated directly into
+   the new Python script.
+
+3. Establish Neo4j relationships between PubMedArticle nodes representing seminal_papers and PubMedArticle nodes
+   representing references and citing_papers.
+
+   a. If the fetch request to NCBI does not return any data, then, consistent with the logic in the
+   neo4j_pubmed_batch_embeddings_processor.py Python script, detach and delete the empty PubMedArticle node from
+   theNeo4j database.If the PubMed ID being processed is listed as a seminal node in the cancer_genomics_kg.json file,
+   then the PubMed ID value should be kept in state as the current seminal paper id.
+
+   b. If the PubMed ID being processed is from the "references" set, a "CITES" relationship should be created from the
+   PubMedArticle mode representing the current seminal paper and the PubMedArticle node for the PubMed ID being
+   processed. For example, if the seminal paper PubMed ID is '16632420' and the PubMedArticle being processed represents
+   a reference with a PubMed ID of '21376230' then the Cypher code should be:
+    MATCH (s:PubMedArticle{pubmed_id: 21376230'})
+    MATCH (r:PubMedArticle{pubmed_id: '16632420'})
+    MERGE (s-[:CITES]->(r)
+
+   c. If the PubMed ID being processed is from the "citing_papers" set, a "CITES" relationship should be created from the
+   PubMedArticle mode representing the PubMedArticle node for the PubMed ID being to the PubMedArticle node
+   representing the current seminal paper. For example, if the seminal paper PubMed ID is '16632420'
+   and the PubMedArticle being processed represent a citing paper  with a PubMed ID of '40868150' then the Cypher code should be:
+    MATCH (s:PubMedArticle{pubmed_id: 21376230'})
+    MATCH (c:PubMedArticle{pubmed_id: '40868150'})
+    MERGE (c-[:CITES]->(s)
+
+Additional Information:
+1. The primary  environment variables are:  NEO4J_URI = os.getenv('NEO4J_URI')
+                                            NEO4J_USER = os.getenv('NEO4J_USERNAME')
+                                            NEO4J_PASSWORD = os.getenv('NEO4J_PASSWORD')
+                                            PUBMED_EMAIL = os.getenv('NCBI_EMAIL')
+2.EMBEDDING_MODEL = "microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext"
+
+One design option that might be considered would be to modify the existing cancer_pubmed_data_miner.py Python script
+to process each PubMed ID, as described above, as it is generated for listing in the cancer_genomics_kg.json file. In
+that case, generating the file would not be necessary.
+
+I realize that this is a complicated prompt. Please inform me of any issues that need further clarification. Thank you
