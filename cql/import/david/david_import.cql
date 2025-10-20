@@ -53,7 +53,7 @@ AS row FIELDTERMINATOR '\t'
 CALL (row) {
 // Create the PubMedArticle node if novel
   MERGE(g:Gene{GENE_SYMBOL:row.GENE_SYMBOL})
-  MERGE (p:PubMedArticle {pubmed_id: row.PUBMED_ID})
+  MERGE (p:PubMedArticle {pubmed_id: TRIM(row.PUBMED_ID)})
   MERGE (g)-[:HAS_PUBLICATION]->(p)
 } IN TRANSACTIONS OF 1000 ROWS;
 

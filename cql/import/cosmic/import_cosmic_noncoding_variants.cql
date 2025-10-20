@@ -15,7 +15,7 @@
 // Relationships:
 // Cosmic_Sample - [HAS_NONCDDING_VARIANT] -> CNCV
 // CNCV -[HAS_PUBLICATION] -> PubMedArticle
-// CNCV -[HAS_PEHNOTYPE] -> CosmicClassification
+// CNCV -[HAS_PHENOTYPE] -> CosmicClassification
 // Cosmic_Gene -[:HAS_NONCODING_VARIANT] -CNCV
 
 // ================================
@@ -80,7 +80,7 @@ WITH n, row
   )
 
 
-// If COSMIC_GEN_ID is not null, create a HAS_NONCODING_VARIANT
+// If COSMIC_GENE_ID is not null, create a HAS_NONCODING_VARIANT
 WITH n, row
 
   OPTIONAL MATCH (g:COSMIC_GENE {COSMIC_GENE_ID: TRIM(row.COSMIC_GENE_ID)})

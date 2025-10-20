@@ -3,7 +3,7 @@
 // ================================
 //CREATE CONSTRAINT cosmic_mutation_census_unique IF NOT EXISTS
 //FOR (m:COSMIC_MutantCensus) REQUIRE  (m.COSMIC_SAMPLE_ID, m.MUTATION_ID) IS UNIQUE;
-
+CREATE INDEX cosmic_mutant_census_genomic_mutation_index FOR(n:COSMIC_MutantCensus) ON n.GENOMIC_MUTATION_ID;
 // ================================
 // STEP 2: Clean Existing Data
 // ================================
