@@ -3,17 +3,17 @@ Neo4j Cancer Knowledge Graph Builder
 Mines PubMed citations and populates Neo4j with nodes, embeddings, and CITES relationships
 """
 
-import os
-import requests
-import time
 import json
-from typing import Set, Dict, List, Optional, Tuple
-from collections import defaultdict
+import os
+import sys
+import time
+from typing import Set, Dict, List, Optional
 from xml.etree import ElementTree as ET
+
+import requests
+import torch
 from neo4j import GraphDatabase
 from transformers import AutoTokenizer, AutoModel
-import torch
-import numpy as np
 
 
 # Initialize manager with local embedding model
@@ -611,7 +611,7 @@ class Neo4jCancerKGBuilder:
     def build_knowledge_graph(
             self,
             seminal_pmids: List[str],
-            max_citing_papers: int = 500,
+            max_citing_papers: int = 1000,
             process_references: bool = True,
             process_citing: bool = True
     ):
@@ -715,6 +715,25 @@ if __name__ == "__main__":
     NEO4J_PASSWORD = os.getenv('NEO4J_PASSWORD')
     PUBMED_EMAIL = os.getenv('NCBI_EMAIL')
 
+    # Check number of arguments (excluding script name)
+    num_args = len(sys.argv) - 1
+
+    if num_args < 1 or num_args > 10:
+        print(f"Error: Expected 1 to 10 arguments, but received {num_args}")
+        print("Usage: python script.py <int1> [int2] [int3] [int4] [int5] [int6]")
+        sys.exit(1)
+        # Validate that each argument is an integer string
+    seminal_papers = []
+    for i, arg in enumerate(sys.argv[1:], start=1):
+        try:
+        # Convert to integer (will raise ValueError if not a valid integer)
+            num = int(arg)
+            seminal_papers.append(arg)
+        except ValueError:
+            print(f"Error: Argument {i} ('{arg}') is not a valid integer string")
+            sys.exit(1)
+
+
     if not NEO4J_PASSWORD or not PUBMED_EMAIL:
         raise ValueError("Please set NEO4J_PASSWORD and NCBI_EMAIL environment variables")
 
@@ -728,18 +747,18 @@ if __name__ == "__main__":
 
     try:
         # Seminal cancer genomics papers
-        seminal_papers = [
-            "21376230",  # Hallmarks of Cancer: The Next Generation
-            "11381259",  # Hallmarks of Cancer (original)
-            "23539594",  # The Cancer Genome Atlas (TCGA)
-            "23917401",  # COSMIC database paper
-            "23540688",  # Lessons from the Cancer Genome
-        ]
+       # seminal_papers = [
+            #"21376230",  # Hallmarks of Cancer: The Next Generation
+           # "11381259",  # Hallmarks of Cancer (original)
+           # "23539594",  # The Cancer Genome Atlas (TCGA)
+           #"23917401",  # COSMIC database paper
+           # "23540688",  # Lessons from the Cancer Genome
+        #]
 
         # Build the knowledge graph
         builder.build_knowledge_graph(
             seminal_pmids=seminal_papers,
-            max_citing_papers=100,  # Limit for demonstration
+            max_citing_papers=200,  # Limit for demonstration
             process_references=True,
             process_citing=True
         )
