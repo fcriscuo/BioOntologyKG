@@ -4,7 +4,7 @@
 //      have been imported.
 
 
-//Column Headings:
+// TSV file column Headings:
 // COSMIC_SAMPLE_ID	SAMPLE_NAME	COSMIC_PHENOTYPE_ID	COSMIC_FUSION_ID
 // FUSION_SYNTAX	FIVE_PRIME_CHROMOSOME	FIVE_PRIME_STRAND	FIVE_PRIME_TRANSCRIPT_ID
 // FIVE_PRIME_GENE_SYMBOL	FIVE_PRIME_LAST_OBSERVE_EXON	FIVE_PRIME_GENOME_START_FROM
@@ -39,7 +39,7 @@ CREATE INDEX fusion_phenotype_id_index FOR (n:COSMIC_Fusion) ON n.COSMIC_PHENOTY
 CREATE INDEX fusion_pubmed_id_index FOR (n:COSMIC_Fusion) ON n.PUBMED_PMID;
 
 // ================================
-// STEP 2: Delete COSMIC_Fusion nodes if necessary
+// STEP 2: Delete all COSMIC_Fusion nodes if necessary
 // ================================
 MATCH (n:COSMIC_Fusion)
 CALL (n) {
@@ -88,13 +88,12 @@ ON CREATE SET n.COSMIC_GENE_ID = TRIM(row.COSMIC_GENE_ID),
 // create relationships
 // If PUBMED_PMID is not null, create a HAS_PUBLICATION relationship
 WITH n, row
-  // If PUBMED_PMID is not null, create a HAS_PUBLICATION relationship
   OPTIONAL MATCH (p:PubMedArticle {pubmed_id: TRIM(row.PUBMED_PMID)})
   WHERE row.PUBMED_PMID IS NOT NULL
   FOREACH (ignoreMe IN CASE WHEN p IS NOT NULL THEN [1] ELSE [] END |
     MERGE (n)-[:HAS_PUBLICATION]->(p)
   )
-// Create a HAS_PHENOTYPE relationship
+// Create a HAS_PHENOTYPE relationship to COSMIC_Classification
 WITH n, row
   OPTIONAL MATCH (c:COSMIC_Classification {COSMIC_PHENOTYPE_ID: TRIM(row.COSMIC_PHENOTYPE_ID)})
   WHERE row.COSMIC_PHENOTYPE_ID IS NOT NULL

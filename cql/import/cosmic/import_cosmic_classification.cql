@@ -1,6 +1,8 @@
 // COSMIC Classification Data Import Script for Neo4j v5
 // This script imports COSMIC classification data, creates nodes,
 // and establishes relationships with existing NCIT_Term nodes.
+// n.b. The classification data is keyed on PHENOTYPE_ID
+//       These data should not be imported before the NCIT_Term data
 
 // ================================
 // STEP 1: Create Unique Constraint
@@ -34,6 +36,7 @@ CALL (row){
     WHERE row.NCI_CODE IS NOT NULL AND row.NCI_CODE <> ''
     MATCH (n:NCIT_Term {NCI_CODE: row.NCI_CODE})
     MERGE (c)-[:HAS_NCIT]->(n)
+
 } IN TRANSACTIONS OF 1000 ROWS;
 
 // ================================

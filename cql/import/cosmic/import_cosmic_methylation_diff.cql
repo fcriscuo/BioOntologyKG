@@ -4,18 +4,17 @@
 //      have been imported.
 //
 
-// Column headings used for node property names
+// TSV Column headings used for node property names
 // COSMIC_GENE_ID	COSMIC_STUDY_ID	COSMIC_SAMPLE_ID	SAMPLE_NAME	FRAGMENT_ID	CHROMOSOME
 // POSITION	STRAND	GENE_SYMBOL	METHYLATION	AVG_BETA_VALUE_NORMAL	BETA_VALUE	TWO_SIDED_P_VALUE	COSMIC_PHENOTYPE_ID
 
 // ================================
-//  Delete existing COSMIC_MethDiff nodes if necessary
+//  Delete all existing COSMIC_MethDiff nodes if necessary
 // ================================
 MATCH (n:COSMIC_DiffMeth)
 CALL (n) {
     DETACH DELETE n
 } IN TRANSACTIONS OF 1000 ROWS;
-
 
 // ================================
 //  Import data for new COSMIC_DiffMeth nodes from TSV file
@@ -32,7 +31,7 @@ SET n = row,
         n.BETA_VALUE = toFloat(row.BETA_VALUE),
         n.TWO_SIDED_P_VALUE = toFloat(row.TWO_SIDED_P_VALUE)
 
-// create relationship from COSMIC_Sample
+// create a HAS_DIFF_METYLATION relationship from COSMIC_Sample
 WITH n, row
 OPTIONAL MATCH (s:COSMIC_Sample {COSMIC_SAMPLE_ID: TRIM(row.COSMIC_SAMPLE_ID)})
   WHERE row.COSMIC_SAMPLE_ID IS NOT NULL
@@ -40,7 +39,7 @@ OPTIONAL MATCH (s:COSMIC_Sample {COSMIC_SAMPLE_ID: TRIM(row.COSMIC_SAMPLE_ID)})
     MERGE (s)-[:HAS_DIFF_METYLATION]->(n)
   )
 
-// create a relationship to COSMIC_Gene
+// create a HAS_COSMIC_GENE relationship to COSMIC_Gene
 WITH n, row
 OPTIONAL MATCH (g:COSMIC_Gene{COSMIC_GENE_ID: TRIM(row.COSMIC_GENE_ID)})
 WHERE row.COSMIC_GENE_ID IS NOT NULL

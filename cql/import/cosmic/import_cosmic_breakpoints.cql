@@ -1,8 +1,7 @@
 // CQL commands to import data from the COSMIC Breakpoints  TSV file
 
-// n.b. Ths CQL should not be executed until the COSMIC Sample data has been imported
-//
-//      .
+// n.b. Ths CQL should not be executed until the COSMIC Sample data have been imported
+// .
 
 // ================================
 // STEP 1: Create Unique Constraint
@@ -14,21 +13,21 @@ FOR (n:COSMIC_Breakpoint) REQUIRE (n.COSMIC_SAMPLE_ID, n.COSMIC_STRUCTURAL_ID) I
 CREATE INDEX breakpoint_sample_id_index FOR (n:COSMIC_Breakpoint) ON n.COSMIC_SAMPLE_ID;
 
 // ================================
-// STEP 2: Delete COSMIC_Fusion nodes if necessary
+// STEP 2: Delete all COSMIC_Breakpoint nodes if necessary
 // ================================
 MATCH (n:COSMIC_Breakpoint)
 CALL (n) {
     DETACH DELETE n
 } IN TRANSACTIONS OF 1000 ROWS;
 
-//Column Headings:
+// TSV file Column Headings:
 // SAMPLE_NAME	COSMIC_SAMPLE_ID	COSMIC_PHENOTYPE_ID	COSMIC_STRUCTURAL_ID
 // MUTATION_TYPE	CHROM_FROM	LOCATION_FROM_MIN	LOCATION_FROM_MAX	STRAND_FROM	CHROM_TO
 // LOCATION_TO_MIN	LOCATION_TO_MAX	STRAND_TO	NON_TEMPLATED_INS_SEQ	PUBMED_PMID	COSMIC_STUDY_ID
 
 LOAD CSV WITH HEADERS FROM 'file:///Volumes/SSD870/COSMIC_rel102/Import/Cosmic_Breakpoints_v102_GRCh38.tsv' AS row FIELDTERMINATOR '\t'
 CALL (row) {
-// Create the COSMIC_Gene node
+// Create the COSMIC_Breakpoint node
 MERGE (b:COSMIC_Breakpoint{ COSMIC_SAMPLE_ID:row.COSMIC_SAMPLE_ID, COSMIC_STRUCTURAL_ID:row.COSMIC_STRUCTURAL_ID})
 ON CREATE SET b = row,
         b.LOCATION_FROM_MIN = toInteger(row.LOCATION_FROM_MIN),
@@ -45,7 +44,7 @@ WITH b, row
     MERGE (b)-[:HAS_PUBLICATION]->(p)
   )
 
-// create relationship to sample
+// create a HAS_BREAKPOINT relationship from COSMIC_Sample
 WITH b, row
 OPTIONAL MATCH (s:COSMIC_Sample {COSMIC_SAMPLE_ID: TRIM(row.COSMIC_SAMPLE_ID)})
   WHERE row.COSMIC_SAMPLE_ID IS NOT NULL

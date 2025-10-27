@@ -9,14 +9,14 @@
 // Create an index for the COSMIC_SAMPLE_ID
 CREATE INDEX cnv_sample_id_index FOR (n:COSMIC_CNV) ON n.COSMIC_SAMPLE_ID;
 
-// Column headings used for node property names
+// TSV file column headings used for node property names
 // COSMIC_CNV_ID	COSMIC_GENE_ID	GENE_SYMBOL	COSMIC_SAMPLE_ID	SAMPLE_NAME
 // COSMIC_PHENOTYPE_ID	TOTAL_CN	MINOR_ALLELE	MUT_TYPE	COSMIC_STUDY_ID	CHROMOSOME
 // GENOME_START	GENOME_STOP
 
 
 // ================================
-// STEP 2: Delete existing COSMIC_Fusion nodes if necessary
+// STEP 2: Delete all existing COSMIC_CNV nodes if necessary
 // ================================
 MATCH (n:COSMIC_CNV)
 CALL (n) {
@@ -24,19 +24,19 @@ CALL (n) {
 } IN TRANSACTIONS OF 1000 ROWS;
 
 // ================================
-// STEP 3: Import Fusion data from the TSV file
+// STEP 3: Import CNV data from the TSV file
 // ================================
 LOAD CSV WITH HEADERS FROM 'file:///Volumes/SSD870/COSMIC_rel102/Import/Cosmic_CompleteCNA_v102_GRCh38.tsv'
 AS row FIELDTERMINATOR '\t'
 
 CALL (row) {
-// Create the COSMIC_Gene node
+// Create the COSMIC_CNV node
 CREATE (n:COSMIC_CNV{ })
 SET n = row,
         n.GENOME_START = toInteger(row.GENOME_START),
         n.GENOME_START = toInteger(row.GENOME_STOP)
 
-// create relationship from COSMIC_Sample
+// create a HAS_COPY_NUMBER_MUTATION relationship from COSMIC_Sample
 WITH n, row
 OPTIONAL MATCH (s:COSMIC_Sample {COSMIC_SAMPLE_ID: TRIM(row.COSMIC_SAMPLE_ID)})
   WHERE row.COSMIC_SAMPLE_ID IS NOT NULL
@@ -44,7 +44,7 @@ OPTIONAL MATCH (s:COSMIC_Sample {COSMIC_SAMPLE_ID: TRIM(row.COSMIC_SAMPLE_ID)})
     MERGE (s)-[:HAS_COPY_NUMBER_MUTATION]->(n)
   )
 
-// create a relationship to COSMIC_Gene
+// create a HAS_COSMIC_GENE relationship to COSMIC_Gene
 WITH n, row
 OPTIONAL MATCH (g:COSMIC_Gene{COSMIC_GENE_ID: TRIM(row.COSMIC_GENE_ID)})
 WHERE row.COSMIC_GENE_ID IS NOT NULL
