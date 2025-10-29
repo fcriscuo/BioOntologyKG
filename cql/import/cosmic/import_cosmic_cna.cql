@@ -1,7 +1,8 @@
-// CQL commands to import data from the Cosmic_CNA TSV file
+// CQL commands to import data from the Cosmic_CNA TSV file into Neo4j v2025 database
 
-// n.b. Ths CQL should not be executed until the COSMIC Sample, and COSMIC Gene data
-//      have been imported.
+// n.b. The following nodes must be imported before executing this script:
+//      COSMIC_Sample
+//      COSMIC_Gene
 //      The COSMIC file name is CNA, but the data refers to copy number variations
 // ================================
 // STEP 1: Create Unique Constraint
@@ -13,7 +14,6 @@ CREATE INDEX cnv_sample_id_index FOR (n:COSMIC_CNV) ON n.COSMIC_SAMPLE_ID;
 // COSMIC_CNV_ID	COSMIC_GENE_ID	GENE_SYMBOL	COSMIC_SAMPLE_ID	SAMPLE_NAME
 // COSMIC_PHENOTYPE_ID	TOTAL_CN	MINOR_ALLELE	MUT_TYPE	COSMIC_STUDY_ID	CHROMOSOME
 // GENOME_START	GENOME_STOP
-
 
 // ================================
 // STEP 2: Delete all existing COSMIC_CNV nodes if necessary

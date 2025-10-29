@@ -1,4 +1,4 @@
-// COSMIC Individual Data Import Script for Neo4j v5 (Regenerated)
+// COSMIC Individual Data Import Script for Neo4j v2025 (Regenerated)
 // This script imports a subset of columns from the COSMIC sample data
 // to create COSMIC_Individual nodes.
 
@@ -24,7 +24,7 @@ CALL {
 // ================================
 :auto USING PERIODIC COMMIT 1000
 LOAD CSV WITH HEADERS FROM 'file:///COSMIC_rel102/Import/Cosmic_Sample_v102_GRCh38.tsv' AS row FIELDTERMINATOR '\t'
-
+CALL (row) {}
 // Create the COSMIC_Individual node. The unique constraint from Step 1 ensures no duplicates are created.
 CREATE (i:COSMIC_Individual)
 // Set only the specified properties, with type conversion for age fields
@@ -37,7 +37,7 @@ SET i.INDIVIDUAL_ID = row.INDIVIDUAL_ID,
     i.THERAPY = row.THERAPY,
     i.FAMILY = row.FAMILY,
     i.INDIVIDUAL_REMARK = row.INDIVIDUAL_REMARK;
-
+} IN TRANSACTIONS OF 1000 ROWS;
 // ================================
 // STEP 4: Verification Queries
 // ================================

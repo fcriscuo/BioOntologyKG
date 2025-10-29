@@ -1,9 +1,8 @@
 // CQL commands to import data from the Cosmic_ResistanceMutations (CSV)  TSV file
-
-// n.b. Ths CQL should not be executed until the COSMIC Sample, Cosmic Mutant Censius,
-// and COSMIC Classification (i.e Phenotype) data have been imported
-//      .
-
+// n.b. The following nodes must be imported before executing this script:
+//      COSMIC Sample
+//      COSMIC_MutantCensus
+//      COSMIC_Classification
 
 //Column Headings:
 // SAMPLE_NAME	COSMIC_SAMPLE_ID	GENE_SYMBOL	COSMIC_GENE_ID	TRANSCRIPT_ACCESSION
@@ -25,7 +24,8 @@ CALL (m) {
 / ================================
 // STEP 3: Import Resistance Mutation data from the TSV file
 // ================================
-LOAD CSV WITH HEADERS FROM 'file:///Volumes/SSD870/COSMIC_rel102/Import/Cosmic_ResistanceMutations_v102_GRCh38.tsv'
+LOAD CSV WITH HEADERS FROM
+'file:///Volumes/SSD870/COSMIC_rel102/Import/Cosmic_ResistanceMutations_v102_GRCh38.tsv'
 AS row
 FIELDTERMINATOR '\t'
 

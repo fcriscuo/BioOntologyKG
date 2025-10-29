@@ -1,9 +1,8 @@
 // CQL commands to import data from the COSMIC Transcripts  TSV file
 
-// n.b. Ths CQL should not be executed until the COSMIC Gene data has been imported
+// n.b. The following nodes must be imported before executing this script:
+//          COSMIC_Gene
 //
-//      .
-
 // ================================
 // STEP 1: Create Unique Constraint
 // ================================

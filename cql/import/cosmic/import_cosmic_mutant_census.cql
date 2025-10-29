@@ -1,3 +1,9 @@
+// CQL script to import COSMIC Mutation Census data into a Neo4j V2035 database
+// n.b. The following nodes must be imported before executing this script:
+//    COSMIC_Gene
+//    COSMIC_Sample
+//    COSMIC_Classification
+//
 // ================================
 // STEP 1: Create Unique Constraints
 // ================================
@@ -17,7 +23,8 @@ CALL (m) {
 // STEP 3: Import Mutant Census nodes
 // ================================
 
-LOAD CSV WITH HEADERS FROM 'file:///Volumes/SSD870/COSMIC_rel102/Import/Cosmic_MutantCensus_v102_GRCh38.tsv' AS row FIELDTERMINATOR '\t'
+LOAD CSV WITH HEADERS FROM
+'file:///Volumes/SSD870/COSMIC_rel102/Import/Cosmic_MutantCensus_v102_GRCh38.tsv' AS row FIELDTERMINATOR '\t'
 CALL (row) {
 // Create the COSMIC_Gene node
 MERGE (g:COSMIC_MutantCensus{ MUTATION_ID:row.MUTATION_ID})

@@ -1,7 +1,9 @@
-// COSMIC Tumour Data Import Script for Neo4j v5
+// COSMIC Tumour Data Import Script for Neo4j v2025
 // This script imports tumour data from the COSMIC sample file, creates nodes,
 // and links them to existing COSMIC_Individual nodes.
-
+// n.b. The following nodes must be imported before executing this script:
+//      COSMIC_Individual
+//
 // ================================
 // STEP 1: Create Unique Constraint
 // ================================

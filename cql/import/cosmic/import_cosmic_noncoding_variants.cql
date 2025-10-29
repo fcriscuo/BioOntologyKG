@@ -1,7 +1,7 @@
 // CQL commands to import data from the Cosmic_NonCodingVariants (CNCV)  TSV file
-
-// n.b. Ths CQL should not be executed until the COSMIC Sample and COSMIC Gene data
-//      have been imported.
+// n.b. The following nodes must be imported before executing this script:
+//      COSMIC_Sample
+//      COSMIC_Gene
 
 
 //Column Headings:

@@ -1,7 +1,7 @@
 // CQL commands to import data from the COSMIC Breakpoints  TSV file
-
-// n.b. Ths CQL should not be executed until the COSMIC Sample data have been imported
-// .
+//
+// n.b.The following nodes must be imported before executing this script
+//     COSMIC_Sample
 
 // ================================
 // STEP 1: Create Unique Constraint
@@ -24,8 +24,9 @@ CALL (n) {
 // SAMPLE_NAME	COSMIC_SAMPLE_ID	COSMIC_PHENOTYPE_ID	COSMIC_STRUCTURAL_ID
 // MUTATION_TYPE	CHROM_FROM	LOCATION_FROM_MIN	LOCATION_FROM_MAX	STRAND_FROM	CHROM_TO
 // LOCATION_TO_MIN	LOCATION_TO_MAX	STRAND_TO	NON_TEMPLATED_INS_SEQ	PUBMED_PMID	COSMIC_STUDY_ID
-
-LOAD CSV WITH HEADERS FROM 'file:///Volumes/SSD870/COSMIC_rel102/Import/Cosmic_Breakpoints_v102_GRCh38.tsv' AS row FIELDTERMINATOR '\t'
+// Change the file name and path as required//
+LOAD CSV WITH HEADERS FROM 'file:///Volumes/SSD870/COSMIC_rel102/Import/Cosmic_Breakpoints_v102_GRCh38.tsv'
+  AS row FIELDTERMINATOR '\t'
 CALL (row) {
 // Create the COSMIC_Breakpoint node
 MERGE (b:COSMIC_Breakpoint{ COSMIC_SAMPLE_ID:row.COSMIC_SAMPLE_ID, COSMIC_STRUCTURAL_ID:row.COSMIC_STRUCTURAL_ID})
@@ -36,8 +37,8 @@ ON CREATE SET b = row,
         b.LOCATION_TO_MAX = toInteger(row.LOCATION_TO_MAX)
 
 // If PUBMED_PMID is not null, create a HAS_PUBLICATION relationship
+// A placeholder PubMedArticle node will be created if PubMed ID is novel
 WITH b, row
-  // If PUBMED_PMID is not null, create a HAS_PUBLICATION relationship
   OPTIONAL MATCH (p:PubMedArticle {pubmed_id: TRIM(row.PUBMED_PMID)})
   WHERE row.PUBMED_PMID IS NOT NULL
   FOREACH (ignoreMe IN CASE WHEN p IS NOT NULL THEN [1] ELSE [] END |

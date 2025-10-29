@@ -1,6 +1,8 @@
-// COSMIC Cancer Gene Census Import Script for Neo4j v5
-// This script imports gene census data, creates nodes, links them to HGNC nodes,
-// and creates relationships between translocation partners.
+// COSMIC Cancer Gene Census Import Script for Neo4j v2025
+// This script imports gene census data, creates nodes
+// n.b. The following nodes must be imported before executing this script:
+//          COSMIC_Gene
+// This CQL was created by Antropic Claude Sonnet 4.5
 
 // ================================
 // STEP 1: Create Unique Constraints
@@ -23,9 +25,11 @@ CALL {
 
 // ================================
 // STEP 3: Import Gene Census Data
+// Change the file name and path as required
 // ================================
-//:auto USING PERIODIC COMMIT 1000
-LOAD CSV WITH HEADERS FROM 'file:///Volumes/SSD870/COSMIC_rel102/Import/Cosmic_CancerGeneCensus_v102_GRCh38.tsv' AS row FIELDTERMINATOR '\t'
+
+LOAD CSV WITH HEADERS FROM
+  'file:///Volumes/SSD870/COSMIC_rel102/Import/Cosmic_CancerGeneCensus_v102_GRCh38.tsv' AS row FIELDTERMINATOR '\t'
 CALL (row) {
     // Create the COSMIC_Cancer_Gene node
     CREATE (g:COSMIC_Cancer_Gene)
@@ -37,11 +41,15 @@ CALL (row) {
         g.TUMOUR_TYPES_GERMLINE = CASE WHEN row.TUMOUR_TYPES_GERMLINE IS NOT NULL THEN split(row.TUMOUR_TYPES_GERMLINE, ',') ELSE [] END,
         g.MUTATION_TYPES = CASE WHEN row.MUTATION_TYPES IS NOT NULL THEN split(row.MUTATION_TYPES, ',') ELSE [] END,
         g.TRANSLOCATION_PARTNER = CASE WHEN row.TRANSLOCATION_PARTNER IS NOT NULL THEN split(row.TRANSLOCATION_PARTNER, ',') ELSE [] END
+    // create a relationship to COSMIC_GENE node
+// Create HAS_COSMIC_CANCER_GENE relationships
+    WITH g
+    MATCH (c:COSMIC_Gene) {COSMIC_GENE_ID: g.COSMIC_GENE_ID})
+    MERGE (g)-[:HAS_COSMIC_CANCER_GENE]->(c)
 
-    // Create relationship to the corresponding HGNC node
-    WITH g, row
-    MATCH (h:HGNC {symbol: row.GENE_SYMBOL})
-    MERGE (g)-[:HAS_HGNC]->(h)
+} IN TRANSACTIONS OF 1000 ROWS;
+
+
 } IN TRANSACTIONS OF 1000 ROWS;
 
 // ================================

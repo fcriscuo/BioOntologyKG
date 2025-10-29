@@ -1,15 +1,15 @@
 // CQL commands to import data from the Cosmic_CompleteDifferentialMethylation TSV file
 
-// n.b. Ths CQL should not be executed until the COSMIC Sample, and COSMIC Gene data
-//      have been imported.
-//
+// n.b. The following nodes must be imported before executing this script:
+//            COSMIC_Sample
+//            COSMIC_Gene
 
 // TSV Column headings used for node property names
 // COSMIC_GENE_ID	COSMIC_STUDY_ID	COSMIC_SAMPLE_ID	SAMPLE_NAME	FRAGMENT_ID	CHROMOSOME
 // POSITION	STRAND	GENE_SYMBOL	METHYLATION	AVG_BETA_VALUE_NORMAL	BETA_VALUE	TWO_SIDED_P_VALUE	COSMIC_PHENOTYPE_ID
 
 // ================================
-//  Delete all existing COSMIC_MethDiff nodes if necessary
+//  Delete all existing COSMIC_DiffMeth nodes if necessary
 // ================================
 MATCH (n:COSMIC_DiffMeth)
 CALL (n) {
@@ -20,7 +20,8 @@ CALL (n) {
 //  Import data for new COSMIC_DiffMeth nodes from TSV file
 // ================================
 
-LOAD CSV WITH HEADERS FROM 'file:///Volumes/SSD870/COSMIC_rel102/Import/Cosmic_CompleteDifferentialMethylation_v102_GRCh38.tsv'
+LOAD CSV WITH HEADERS FROM
+'file:///Volumes/SSD870/COSMIC_rel102/Import/Cosmic_CompleteDifferentialMethylation_v102_GRCh38.tsv'
 AS row FIELDTERMINATOR '\t'
 
 CALL (row) {

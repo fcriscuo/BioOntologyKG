@@ -1,8 +1,9 @@
-// COSMIC Classification Data Import Script for Neo4j v5
+// COSMIC Classification Data Import Script for Neo4j v2025
 // This script imports COSMIC classification data, creates nodes,
 // and establishes relationships with existing NCIT_Term nodes.
-// n.b. The classification data is keyed on PHENOTYPE_ID
-//       These data should not be imported before the NCIT_Term data
+// n.b. The following nodes must be imported before executing this script:
+//      NCIT_TERN
+// This CQL was generated using Antropic Claude Sonnet 4.5
 
 // ================================
 // STEP 1: Create Unique Constraint
@@ -25,7 +26,9 @@ CALL (c) {
 // ================================
 // Load data from the TSV file, create COSMIC_Classification nodes,
 // and link them to NCIT_Term nodes.
-LOAD CSV WITH HEADERS FROM 'file:///Volumes/SSD870/COSMIC_rel102/Cosmic_Classification_Tsv_v102_GRCh38/Cosmic_Classification_v102_GRCh38.tsv' AS row FIELDTERMINATOR '\t'
+// Change the file name and path as required
+LOAD CSV WITH HEADERS FROM
+'file:///Volumes/SSD870/COSMIC_rel102/Import/Cosmic_Classification_v102_GRCh38.tsv' AS row FIELDTERMINATOR '\t'
 CALL (row){
     // Create the COSMIC_Classification node and set its properties
     CREATE (c:COSMIC_Classification)

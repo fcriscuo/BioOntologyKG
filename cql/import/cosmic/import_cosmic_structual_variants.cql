@@ -1,8 +1,7 @@
 // CQL commands to import data from the Cosmic_StructuralVariants (CSV)  TSV file
-
-// n.b. Ths CQL should not be executed until the COSMIC Sample and COSMIC Classification (i.e Phenotype) data
-//      have been imported.
-
+// n.b. The following nodes must be imported before executing this script:
+//    COSMIC_Sample
+//    COSMIC_Classification
 
 //Column Headings:
 //SAMPLE_NAME	COSMIC_SAMPLE_ID	COSMIC_PHENOTYPE_ID	COSMIC_STRUCTURAL_ID	MUTATION_TYPE

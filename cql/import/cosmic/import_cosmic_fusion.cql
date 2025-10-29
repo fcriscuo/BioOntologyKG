@@ -1,9 +1,9 @@
 // CQL commands to import data from the Cosmic_Fusion TSV file
 
-// n.b. Ths CQL should not be executed until the COSMIC Sample, COSMIC Classification and COSMIC Gene data
-//      have been imported.
-
-
+// n.b. TThe following nodes must be imported before executing this script:
+//        COSMIC_Sample
+//        COSMIC_Classification
+//        COSMIC_Gene
 // TSV file column Headings:
 // COSMIC_SAMPLE_ID	SAMPLE_NAME	COSMIC_PHENOTYPE_ID	COSMIC_FUSION_ID
 // FUSION_SYNTAX	FIVE_PRIME_CHROMOSOME	FIVE_PRIME_STRAND	FIVE_PRIME_TRANSCRIPT_ID
@@ -48,6 +48,7 @@ CALL (n) {
 
 // ================================
 // STEP 3: Import Fusion data from the TSV file
+// Change the file name and path as required
 // ================================
 LOAD CSV WITH HEADERS FROM 'file:///Volumes/SSD870/COSMIC_rel102/Import/Cosmic_Fusion_v102_GRCh38.tsv'
 AS row

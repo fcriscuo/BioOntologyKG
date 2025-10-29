@@ -1,6 +1,8 @@
-// COSMIC Genes Data Import Script for Neo4j v5
+// COSMIC Genes Data Import Script for Neo4j v2025
 // This script imports gene data, creates nodes, and establishes relationships
-// to HGNC, COSMIC_Cancer_Gene, and UniProt nodes.
+// n.b. The following nodes must be imported before executing this script:
+//           DAVID Gene
+//           UniProt
 
 // ================================
 // STEP 1: Create Unique Constraints
@@ -34,14 +36,6 @@ SET g = row
 // ================================
 // STEP 4: Create Relationships
 // ================================
-
-// Create HAS_COSMIC_CANCER_GENE relationships
-MATCH (g:COSMIC_Gene)
-WHERE g.IN_CANCER_CENSUS = 'y'
-CALL (g) {
-    MATCH (ccg:COSMIC_Cancer_Gene {COSMIC_GENE_ID: g.COSMIC_GENE_ID})
-    MERGE (g)-[:HAS_COSMIC_CANCER_GENE]->(ccg)
-} IN TRANSACTIONS OF 1000 ROWS;
 
 // Create HAS_UNIPROT relationships
 MATCH (g:COSMIC_Gene)
