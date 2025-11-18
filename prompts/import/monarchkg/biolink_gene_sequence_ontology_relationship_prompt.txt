@@ -1,0 +1,18 @@
+As a Neo4j v2025 expert, please generate a Cypher Query Language (CQL) script that
+will create relationships between existing database nodes. Please adhere to
+the following specifications:
+
+1. The CQL script will be submitted to a Neo4j Browser connected to a local Neo4j database.
+2. The script should process all existing `biolink:Gene` nodes.
+3. The script should create a "HAS_SEQUENCE_ONTOLOGY" relationship from a `biolink:Gene` node to
+   a "SequenceOntologyTerm" node based on the `biolink:Gene`:type property matching the
+   SequenceOntologyTerm:id property
+4. The script should create a "HAS_HGNC" relationship from a `biolink:Gene` node to a HGNC node
+   based on `biolink:Gene`:id property matching the HGNC:hgnc_id property.
+5. The script should process all existing "Gene" nodes in the database and create a "HAS_BIOLINK_GENE"
+   relationship from a "Gene" node to the `bioink:Gene` node base on the Gene:GENE_SYMBOL property
+   matching the `bioink:Gene`:symbol property
+6. The creation of these relationships should be within 1 or 2 Neo4j CALL blocks with a
+   transaction count of 1000
+
+Thank you

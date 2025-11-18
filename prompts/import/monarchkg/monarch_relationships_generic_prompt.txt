@@ -1,0 +1,48 @@
+As a Neo4j v2025 and Python 3 expert, please create a Python 3 script that will generate and execute
+a Cypher Query Language (CQL) that will import MonarchKG relationship data from a tsv-formatted file.
+Each MonarchKG relationship file represents data for a specific relationship
+(e.g (Biolink:Gene -[:biolink:causes] -> (biolink:Disease).
+All the relationship files have the same columns to represent a relationship (e.g. subject -predicate ->object).
+Therefor it's possible to generate a CQL to import relationship data from any of the MonarchKG
+relationship file.
+
+1. The Python script should prompt the user to enter the full path name for the relationship file.
+2. In processing the Specified file, only rows where the "subject_taxon" column has a value
+   of "NCBITaxon:9606" should be imported. Rows with a different value for "subject_taxon" should be ignored.
+3. For each row that passes the subject taxon filter, the Python script should generate CQL to create a
+   Neo4j relationship in a local Neo4j v2025 database. The parameters need to establish a Neo4j connection
+   (i.e. user, database, uri, and password) should be obtained via OS environment settings.
+4.The value of the "subject_category" column represents the node label for the source node
+  in the Neo4j relationship
+5 The value of the "subject" column represents the "id" property of the source node
+6. The value of the "predicate" column represents the label for the Neo4j relationship.
+7. The value of the "primary_knowledge_source" column represents a "primary_knowledge_source"
+   property for the Neo4j relationship.
+8. If the "publications" column contains one or more values, they should be imported as a List as
+   a "publications" property for the Neo4j relationship
+9. The value of the "object_category" column represents the Neo4j node label for the target of the
+   Neo4j relationship
+10. The value of the "object" column represents the "id" property of the target node
+11. Some of the TSV files are very large so the rows should be processed in transactions of 1000 rows.
+12. The python script should report the number of relationships created
+
+Example:
+Input row from TSV file
+subject="HGNC:11802"
+subject_category="biolink:Gene"
+subject_taxon="NCBITaxon:9606"
+predicate="biolink:causes"
+object_category="biolink:Disease"
+object_label="jMONDO:0008908"
+primary_knowledge_source="infores_omim"
+publications=["PMID:123456","PMID:76543"]
+
+Since the value  of the "subject_taxon" column is "NCBITaxon:9606", the row passes the filter
+
+Generated CQL
+MATCH(s:`biolink:Gene` {id:'HGNC:11802'})
+MATCH(t:`biolink:Disease` {id:'MONDO:0008908'})
+CREATE (s)-[:`biolink:causes`{primary_knowledge_source:'infores_omim',
+  pulications:["PMID:123456","PMID:76543"]}]->(t)
+
+ Thanks.

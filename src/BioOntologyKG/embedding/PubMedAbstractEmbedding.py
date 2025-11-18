@@ -21,7 +21,7 @@ class PubMedEmbeddingsManager:
     """Manages PubMed data with local embeddings and Neo4j vector search"""
 
     def __init__(self, neo4j_uri: str, neo4j_user: str, neo4j_password: str,
-                 embedding_model: str = "all-MiniLM-L6-v2"):
+                 embedding_model: str = "microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext"):
         """
         Initialize with Neo4j connection and embedding model
 
@@ -318,12 +318,13 @@ def main():
     # - "all-MiniLM-L6-v2" (384 dimensions, fast and good quality)
     # - "all-mpnet-base-v2" (768 dimensions, higher quality)
     # - "dmis-lab/biobert-base-cased-v1.1" (768 dimensions, biomedical domain)
+    # microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext
 
     manager = PubMedEmbeddingsManager(
         neo4j_uri=NEO4J_URI,
         neo4j_user=NEO4J_USER,
         neo4j_password=NEO4J_PASSWORD,
-        embedding_model="all-mpnet-base-v2"  # Change to biomedical model if desired
+        embedding_model="microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext"
     )
 
     try:

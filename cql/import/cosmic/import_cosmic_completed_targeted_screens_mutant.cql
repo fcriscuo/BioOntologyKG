@@ -53,7 +53,7 @@ WHERE c.COSMIC_SAMPLE_ID IS NOT NULL
 //If the CompleteTargetedScreensMutant row specifies a PubMed ID, create a HAS_PUBLICATION relationship
 WITH c
 WHERE c.PUBMED_PMID IS NOT null
-    MERGE (p:Publication {pubmed_id: TRIM(c.PUBMED_PMID)})
+    MERGE (p:PubMedArticle {pubmed_id: TRIM(c.PUBMED_PMID)})
     MERGE (c)-[:HAS_PUBLICATION]->(p)
 
 // Create a HAS_PHENOTYPE relation with a COSMIC_Classification node
@@ -68,7 +68,7 @@ WHERE c.TRANSCRIPT_ACCESSION IS NOT NULL
   MERGE (t:COSMIC_Transcript {TRANSCRIPT_ACCESSION: c.TRANSCRIPT_ACCESSION})
   MERGE (c)-[:HAS_TRANSCRIPT]->(t)
 
-// Create a HAS_MUTATION to COSSMIC_MutantCensus
+// Create a HAS_MUTATION to COSMIC_MutantCensus
 WITH c
   OPTIONAL MATCH (m:COSMIC_MutantCensus {COSMIC_PHENOTYPE_ID: TRIM(c.COSMIC_PHENOTYPE_ID)})
   WHERE c.COSMIC_PHENOTYPE_ID IS NOT NULL

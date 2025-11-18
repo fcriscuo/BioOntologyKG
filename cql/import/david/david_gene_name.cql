@@ -1,5 +1,5 @@
 // Cypher Query Language (CQL) script to import data from the following DAVID files:
-//          DAVID GENE_SYMBOL2DAVID_GENE_NAME.txt
+//          DAVID GENE_SYMBOL2DAVID_GENE_NAME.tsv
 // DAVID data files obtained by requests to: https://davidbioinformatics.nih.gov/knowledgebase/knowledgebaseRequest.jsp
 //
 //Citations B.T. Sherman, M. Hao, J. Qiu, X. Jiao, M.W. Baseler, H.C. Lane,
@@ -9,6 +9,9 @@
 //Huang DW, Sherman BT, Lempicki RA.
 //Systematic and integrative analysis of large gene lists using DAVID Bioinformatics Resources.
 //Nature Protoc. 2009;4(1):44-57.
+
+// n.b. The following nodes must be imported before executing this script:
+//         HGNC
 
 // ================================
 // STEP 1: Create Unique Constraint
@@ -25,8 +28,6 @@ MATCH (g:Gene)
 CALL (g) {
     DETACH DELETE g
 } IN TRANSACTIONS OF 1000 ROWS;
-
-
 
 // ================================
 // STEP 3: Import genes from file

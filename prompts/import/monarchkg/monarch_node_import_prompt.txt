@@ -1,0 +1,21 @@
+As a Neo4j v2025 expert, please generate a Cypher Query Language (CQL) script that
+will import MonarchKG node data from a tsv-formatted file. Please adhere to
+the following specifications:
+1. The TSV column names are: id, category, name, description, in_taxon, in_taxon_label, t
+    symbol, synonyms, xref, synonym, full_name, type, has_gene, exact_synonym,
+    broad_synonym, narrow_synonym, related_synonym, deprecated, iri, same_as, subsets,
+     and provided_by
+     These names should be used as node property names.
+ 2. The "category" column should be used as the Neo4j node label
+ 3. The TSV file contains data that will map to multiple node labels. (e.g. biolink:Pathway, biolink:Gene)
+ 4. Column values enclosed by brackets (i.e. '[' and ']') should be imported into Neo4j as
+    lists (e.g. ['ENSEMBL:ENSG00000105131', 'OMIM:617400']). The single quote marks (i.e. ') should be removed before
+    importing into Neo4j (e.g. 'OMIM:617400' -> OMIM:617400). In most cases, bracketed data will contain comma separated
+    values (e.g. ['ENSEMBL:ENSG00000074800', 'OMIM:172430']),  but there will be bracketed data that have ony a single
+    value. The latter should still be imported as a list.
+ 5. Column values that contain commas, but are not within brackets (e.g. RNA, U7 small nuclear 52 pseudogene) should
+    be imported as a String
+ 6. The 'in_taxon' column should not be imported.
+ 7. The TSV file to be imported is '/Volumes/SSD870/data/MonarchKG/monarch-kg/human_monarch-kg_nodes.tsv'
+
+Thank you

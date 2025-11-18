@@ -1,0 +1,3 @@
+As a Neo4j v2025 expert, please generate a Cypher Query Language (CQL) script that
+will import SequenceOntology data from an obo-formatted file. Please adhere to
+the following specifications:
