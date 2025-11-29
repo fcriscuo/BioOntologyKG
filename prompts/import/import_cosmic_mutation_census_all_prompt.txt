@@ -1,0 +1,47 @@
+As a Neo4j v2025 expert, please generate a Cypher Query Language (CQL) script that
+will import COSMIC Cancer Mutation Census (CMC)  data from a tsv-formatted file. Please adhere to
+the following specifications:
+1. The input tsv file is file:///Volumes/SSD870/COSMIC_rel102/CMC/CancerMutationCensus_AllData_v102_GRCh37.tsv
+2. The first line of the tsv file consist of column headings
+3. After the header line, each subsequent line should be used to create a new  COSMIC_CMC node.
+4. Each column in a tsv row should be used to create a property in the COSMIC_CMC node. The property name should be
+   the same as the column name,
+5. The following CMC columns are to be imported to Neo4j as floating point values:
+  EXAC_AF
+EXAC_AFR_AF
+EXAC_AMR_AF
+EXAC_ADJ_AF
+EXAC_EAS_AF
+EXAC_FIN_AF
+EXAC_NFE_AF
+EXAC_SAS_AF
+GNOMAD_EXOMES_AF
+GNOMAD_EXOMES_AFR_AF
+GNOMAD_EXOMES_AMR_AF
+GNOMAD_EXOMES_ASJ_AF
+GNOMAD_EXOMES_EAS_AF
+GNOMAD_EXOMES_FIN_AF
+GNOMAD_EXOMES_NFE_AF
+GNOMAD_EXOMES_SAS_AF
+GNOMAD_GENOMES_AF
+GNOMAD_GENOMES_AFR_AF
+GNOMAD_GENOMES_AMI_AF
+GNOMAD_GENOMES_AMR_AF
+GNOMAD_GENOMES_ASJ_AF
+GNOMAD_GENOMES_EAS_AF
+GNOMAD_GENOMES_FIN_AF
+GNOMAD_GENOMES_MID_AF
+GNOMAD_GENOMES_NFE_AF
+GNOMAD_GENOMES_SAS_AF
+GERP++_RS
+MIN_SIFT_SCORE
+MIN_SIFT_PRED
+DNDS_DISEASE_QVAL
+
+6. The CMC GENE_NAME property should be used to create a Neo4j HAS_GENE  relationship from the COSMIC_CMC node
+   to a `biolink:Gene` mode, matching on the `biolink:Gene` node's symbol property.
+7. The CMC ONTOLOGY_MUTATION_CODE  should be used to create a HAS_SEQUENCE_ONTOLOGY relationship from the CMC node to
+   a SequenceOntologyTerm node matching on the SequenceOntologyTerm's id property
+8. The TSV file is very large. The import should be processed in transactions of 1000 rows.
+
+Thank you.

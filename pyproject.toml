@@ -3,10 +3,11 @@ name = "bioontologykg"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python ="==3.12.8"
 dependencies = [
     "bio>=1.8.0",
     "biopython>=1.85",
+    "compressed-tensors>=0.12.2",
     "datetime>=5.5",
     "dotenv>=0.9.9",
     "fastapi>=0.116.1",
@@ -22,6 +23,8 @@ dependencies = [
     "requests>=2.32.5",
     "scikit-learn>=1.7.2",
     "sentence-transformers>=5.1.0",
+    "tiktoken>=0.12.0",
+    "torch>=2.8.0",
     "tqdm>=4.67.1",
     "transformers>=4.56.1",
     "typing>=3.10.0.0",

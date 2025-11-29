@@ -1,0 +1,77 @@
+// COSMIC Cancer Mutation Census (CMC) Import Script
+// Neo4j v2025 - Batched Transaction Processing
+// File: CancerMutationCensus_AllData_v102_GRCh37.tsv
+
+// First, create indexes for optimal performance
+CREATE INDEX cosmic_cmc_id IF NOT EXISTS FOR (c:COSMIC_CMC) ON (c.GENOMIC_MUTATION_ID);
+CREATE INDEX gene_symbol IF NOT EXISTS FOR (g:`biolink:Gene`) ON (g.symbol);
+CREATE INDEX so_term_id IF NOT EXISTS FOR (s:SequenceOntologyTerm) ON (s.id);
+
+// Main import query with batched transactions (1000 rows per transaction)
+LOAD CSV WITH HEADERS FROM 'file:///Volumes/SSD870/COSMIC_rel102/CMC/CancerMutationCensus_AllData_v102_GRCh37.tsv'
+AS row
+FIELDTERMINATOR '\t'
+CALL (row) {
+  WITH row
+
+  // Create COSMIC_CMC node with all properties
+  CREATE (cmc:COSMIC_CMC)
+  SET cmc += row,
+      // Convert string columns to float for allele frequency and scoring fields
+      cmc.EXAC_AF = CASE WHEN row.EXAC_AF IS NOT NULL AND row.EXAC_AF <> '' THEN toFloat(row.EXAC_AF) ELSE null END,
+      cmc.EXAC_AFR_AF = CASE WHEN row.EXAC_AFR_AF IS NOT NULL AND row.EXAC_AFR_AF <> '' THEN toFloat(row.EXAC_AFR_AF) ELSE null END,
+      cmc.EXAC_AMR_AF = CASE WHEN row.EXAC_AMR_AF IS NOT NULL AND row.EXAC_AMR_AF <> '' THEN toFloat(row.EXAC_AMR_AF) ELSE null END,
+      cmc.EXAC_ADJ_AF = CASE WHEN row.EXAC_ADJ_AF IS NOT NULL AND row.EXAC_ADJ_AF <> '' THEN toFloat(row.EXAC_ADJ_AF) ELSE null END,
+      cmc.EXAC_EAS_AF = CASE WHEN row.EXAC_EAS_AF IS NOT NULL AND row.EXAC_EAS_AF <> '' THEN toFloat(row.EXAC_EAS_AF) ELSE null END,
+      cmc.EXAC_FIN_AF = CASE WHEN row.EXAC_FIN_AF IS NOT NULL AND row.EXAC_FIN_AF <> '' THEN toFloat(row.EXAC_FIN_AF) ELSE null END,
+      cmc.EXAC_NFE_AF = CASE WHEN row.EXAC_NFE_AF IS NOT NULL AND row.EXAC_NFE_AF <> '' THEN toFloat(row.EXAC_NFE_AF) ELSE null END,
+      cmc.EXAC_SAS_AF = CASE WHEN row.EXAC_SAS_AF IS NOT NULL AND row.EXAC_SAS_AF <> '' THEN toFloat(row.EXAC_SAS_AF) ELSE null END,
+      cmc.GNOMAD_EXOMES_AF = CASE WHEN row.GNOMAD_EXOMES_AF IS NOT NULL AND row.GNOMAD_EXOMES_AF <> '' THEN toFloat(row.GNOMAD_EXOMES_AF) ELSE null END,
+      cmc.GNOMAD_EXOMES_AFR_AF = CASE WHEN row.GNOMAD_EXOMES_AFR_AF IS NOT NULL AND row.GNOMAD_EXOMES_AFR_AF <> '' THEN toFloat(row.GNOMAD_EXOMES_AFR_AF) ELSE null END,
+      cmc.GNOMAD_EXOMES_AMR_AF = CASE WHEN row.GNOMAD_EXOMES_AMR_AF IS NOT NULL AND row.GNOMAD_EXOMES_AMR_AF <> '' THEN toFloat(row.GNOMAD_EXOMES_AMR_AF) ELSE null END,
+      cmc.GNOMAD_EXOMES_ASJ_AF = CASE WHEN row.GNOMAD_EXOMES_ASJ_AF IS NOT NULL AND row.GNOMAD_EXOMES_ASJ_AF <> '' THEN toFloat(row.GNOMAD_EXOMES_ASJ_AF) ELSE null END,
+      cmc.GNOMAD_EXOMES_EAS_AF = CASE WHEN row.GNOMAD_EXOMES_EAS_AF IS NOT NULL AND row.GNOMAD_EXOMES_EAS_AF <> '' THEN toFloat(row.GNOMAD_EXOMES_EAS_AF) ELSE null END,
+      cmc.GNOMAD_EXOMES_FIN_AF = CASE WHEN row.GNOMAD_EXOMES_FIN_AF IS NOT NULL AND row.GNOMAD_EXOMES_FIN_AF <> '' THEN toFloat(row.GNOMAD_EXOMES_FIN_AF) ELSE null END,
+      cmc.GNOMAD_EXOMES_NFE_AF = CASE WHEN row.GNOMAD_EXOMES_NFE_AF IS NOT NULL AND row.GNOMAD_EXOMES_NFE_AF <> '' THEN toFloat(row.GNOMAD_EXOMES_NFE_AF) ELSE null END,
+      cmc.GNOMAD_EXOMES_SAS_AF = CASE WHEN row.GNOMAD_EXOMES_SAS_AF IS NOT NULL AND row.GNOMAD_EXOMES_SAS_AF <> '' THEN toFloat(row.GNOMAD_EXOMES_SAS_AF) ELSE null END,
+      cmc.GNOMAD_GENOMES_AF = CASE WHEN row.GNOMAD_GENOMES_AF IS NOT NULL AND row.GNOMAD_GENOMES_AF <> '' THEN toFloat(row.GNOMAD_GENOMES_AF) ELSE null END,
+      cmc.GNOMAD_GENOMES_AFR_AF = CASE WHEN row.GNOMAD_GENOMES_AFR_AF IS NOT NULL AND row.GNOMAD_GENOMES_AFR_AF <> '' THEN toFloat(row.GNOMAD_GENOMES_AFR_AF) ELSE null END,
+      cmc.GNOMAD_GENOMES_AMI_AF = CASE WHEN row.GNOMAD_GENOMES_AMI_AF IS NOT NULL AND row.GNOMAD_GENOMES_AMI_AF <> '' THEN toFloat(row.GNOMAD_GENOMES_AMI_AF) ELSE null END,
+      cmc.GNOMAD_GENOMES_AMR_AF = CASE WHEN row.GNOMAD_GENOMES_AMR_AF IS NOT NULL AND row.GNOMAD_GENOMES_AMR_AF <> '' THEN toFloat(row.GNOMAD_GENOMES_AMR_AF) ELSE null END,
+      cmc.GNOMAD_GENOMES_ASJ_AF = CASE WHEN row.GNOMAD_GENOMES_ASJ_AF IS NOT NULL AND row.GNOMAD_GENOMES_ASJ_AF <> '' THEN toFloat(row.GNOMAD_GENOMES_ASJ_AF) ELSE null END,
+      cmc.GNOMAD_GENOMES_EAS_AF = CASE WHEN row.GNOMAD_GENOMES_EAS_AF IS NOT NULL AND row.GNOMAD_GENOMES_EAS_AF <> '' THEN toFloat(row.GNOMAD_GENOMES_EAS_AF) ELSE null END,
+      cmc.GNOMAD_GENOMES_FIN_AF = CASE WHEN row.GNOMAD_GENOMES_FIN_AF IS NOT NULL AND row.GNOMAD_GENOMES_FIN_AF <> '' THEN toFloat(row.GNOMAD_GENOMES_FIN_AF) ELSE null END,
+      cmc.GNOMAD_GENOMES_MID_AF = CASE WHEN row.GNOMAD_GENOMES_MID_AF IS NOT NULL AND row.GNOMAD_GENOMES_MID_AF <> '' THEN toFloat(row.GNOMAD_GENOMES_MID_AF) ELSE null END,
+      cmc.GNOMAD_GENOMES_NFE_AF = CASE WHEN row.GNOMAD_GENOMES_NFE_AF IS NOT NULL AND row.GNOMAD_GENOMES_NFE_AF <> '' THEN toFloat(row.GNOMAD_GENOMES_NFE_AF) ELSE null END,
+      cmc.GNOMAD_GENOMES_SAS_AF = CASE WHEN row.GNOMAD_GENOMES_SAS_AF IS NOT NULL AND row.GNOMAD_GENOMES_SAS_AF <> '' THEN toFloat(row.GNOMAD_GENOMES_SAS_AF) ELSE null END,
+      cmc.`GERP++_RS` = CASE WHEN row.`GERP++_RS` IS NOT NULL AND row.`GERP++_RS` <> '' THEN toFloat(row.`GERP++_RS`) ELSE null END,
+      cmc.MIN_SIFT_SCORE = CASE WHEN row.MIN_SIFT_SCORE IS NOT NULL AND row.MIN_SIFT_SCORE <> '' THEN toFloat(row.MIN_SIFT_SCORE) ELSE null END,
+      cmc.MIN_SIFT_PRED = CASE WHEN row.MIN_SIFT_PRED IS NOT NULL AND row.MIN_SIFT_PRED <> '' THEN toFloat(row.MIN_SIFT_PRED) ELSE null END,
+      cmc.DNDS_DISEASE_QVAL = CASE WHEN row.DNDS_DISEASE_QVAL IS NOT NULL AND row.DNDS_DISEASE_QVAL <> '' THEN toFloat(row.DNDS_DISEASE_QVAL) ELSE null END
+
+  // Create HAS_GENE relationship to biolink:Gene node
+  WITH cmc, row
+  WHERE row.GENE_NAME IS NOT NULL AND row.GENE_NAME <> ''
+  MATCH (gene:COSMIC_GENE {GENE_SYMBOL: row.GENE_NAME})
+  MERGE (cmc)-[:HAS_GENE]->(gene)
+
+  // Create HAS_SEQUENCE_ONTOLOGY relationship to SequenceOntologyTerm node
+  WITH cmc, row
+  WHERE row.ONTOLOGY_MUTATION_CODE IS NOT NULL AND row.ONTOLOGY_MUTATION_CODE <> ''
+  MATCH (so:SequenceOntologyTerm {id: row.ONTOLOGY_MUTATION_CODE})
+  MERGE (cmc)-[:HAS_SEQUENCE_ONTOLOGY]->(so)
+
+} IN TRANSACTIONS OF 1000 ROWS;
+
+// Verification queries (run after import completes)
+// Count total COSMIC_CMC nodes created
+MATCH (cmc:COSMIC_CMC) RETURN count(cmc) as total_cmc_nodes;
+
+// Count relationships created
+MATCH ()-[r:HAS_GENE]->() RETURN count(r) as has_gene_relationships;
+MATCH ()-[r:HAS_SEQUENCE_ONTOLOGY]->() RETURN count(r) as has_so_relationships;
+
+// Sample query to verify data
+MATCH (cmc:COSMIC_CMC)-[:HAS_GENE]->(g:`biolink:Gene`)
+RETURN cmc.GENE_NAME, g.symbol, cmc.GNOMAD_EXOMES_AF
+LIMIT 5;

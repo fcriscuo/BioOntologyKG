@@ -96,8 +96,8 @@ class MonarchKGImporter:
                 for row in reader:
                     total_rows += 1
 
-                    # Filter by subject_taxon
-                    if row.get('subject_taxon') != 'NCBITaxon:9606':
+                    # Filter by subject_taxon if the file has a taxon property
+                    if len(row.get('subject_taxon')) >1 and row.get('subject_taxon') != 'NCBITaxon:9606':
                         continue
 
                     filtered_rows += 1
@@ -147,7 +147,7 @@ class MonarchKGImporter:
             return False
 
         print("-" * 60)
-        print(f"Import completed!")
+        print(f"Import for file  {file_path} completed!")
         print(f"Total rows scanned: {total_rows}")
         print(f"Rows matching filter: {filtered_rows}")
         print(f"Relationships created: {self.relationships_created}")

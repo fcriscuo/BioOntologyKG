@@ -1,0 +1,23 @@
+As a Neo4j v2025 expert, please generate a Cypher Query Language (CQL) script that
+will import MonarchKG NCIT relationship data from a tsv-formatted file. Please adhere to
+the following specifications:
+
+1. The file defines various relationship types between existing NCIT_Term nodes in a Neo4j v2025 database.
+2. The TSV input file is: /Volumes/SSD870/data/MonarchKG/ncit_kgx_tsv_edges.tsv
+3. The Neo4j database is local
+4. The TSV "subject" column contains the NCIT_ID property of the source NCIT_Term node for the relationship
+5. The TSV "predicate" column represents the label for the relationship
+6. The TSV "knowledge_source" column represents the knowledge_source propert for the relationship
+7. The TSV "object" column contains the NCIT_ID property of the destination NCIT_Term node
+8. The TSV file is very large, so relationships should be created in batches of 1000
+9. The NCIT_ID property for NCIT_Term nodes has an existing index
+
+Example:
+id	subject	predicate	object	relation	knowledge_source
+urn:uuid:2d3f509d-f5ec-4267-9e34-c5f390d5706f	NCIT:C126405	biolink:subclass_of	NCIT:C54131	rdfs:subClassOf	NCIT 2025-08-06
+
+MATCH (n1:NCIT_Term {NCIT_ID: row.subhect})
+MATCH (n2:NCIT_Term {NCIT_ID:row.object})
+CREATE (n1)-[r:row.predicate{knowledge_source:row.knowledge_source}]->(n2)
+
+Thanks.

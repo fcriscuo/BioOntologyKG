@@ -1,0 +1,20 @@
+Good Afternoon. I have reviewed the schema of my genomic Neo4j knowledge graph and have decided to implement
+some design changes to consolidate nodes with overlapping properties (e.g. biolink:Gene and Gene).
+Two (2) database operations need to be completed for each pair of overlapping nodes:
+(1) copy a subset of node properties from the redundant node to the retained node
+(2) move relationships from the redundant node to the retained node.
+For example to eliminate the need for redundant Gene nodes:
+1. Process every Gene node
+2. Match a Gene (g) node to an equivalent biolink:Gene (bg) node based on g.GENE_SYMBOL = bg.symbol
+3. If there is a match, copy the following properties from the Gene node to the biolink:Gene node, if not null:
+    ENTREZ_GENE_SUMMARY
+    gene_summary_embedding
+    CYTOGENIC_LOCATION
+4. Move the following relationships form the Gene (g) node to the matching biolink:Gene (bg) node:
+    COSMIC_GENE (cg) -[:HAS_GENE] ->Gene (g) moved to COSMIC_GENE (cg) -[:HAS_GENE] ->biolink:Gene (bg)
+    Gene (g) -[:HAS_PUBLICATION]-> PubMedArticle (p)   moved to biolink:Gene (bg) -[:HAS_PUBLICATION]-> PubMedArticle(p)
+    The HAS_PUBLICATION relationship should only be moved if the equivalent biolink:Gene node does not already have the
+    same HAS_PUBLICATION relationship
+5. DETACH AND DELETE the Gene node
+
+Please generate a Cyoher QueryLanguage (CQL) to perform this node remediation
