@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python ="==3.12.8"
 dependencies = [
+    "bibtexparser>=1.4.3",
     "bio>=1.8.0",
     "biopython>=1.85",
     "compressed-tensors>=0.12.2",
