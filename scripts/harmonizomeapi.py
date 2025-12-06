@@ -62,7 +62,7 @@ VERSION = '1.0'
 API_URL = 'https://maayanlab.cloud/Harmonizome/api'
 DOWNLOAD_URL = 'https://maayanlab.cloud/static/hdfs/harmonizome/data'
 
-# This config objects pulls the names of the datasets, their directories, and
+# This embedding objects pulls the names of the datasets, their directories, and
 # the possible downloads from the API. This allows us to add new datasets and
 # downloads without breaking this file.
 config = json_from_url(API_URL + '/dark/script_config')
